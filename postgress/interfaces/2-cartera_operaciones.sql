@@ -1,4 +1,4 @@
--- TABLAS PARA LAS INTERFACES
+-- TABLA CARTERA_OPERACIONES
 
 DO
 $$
@@ -115,6 +115,98 @@ $$;
 -- Tabla interface.cartera_operaciones
 
 CREATE TABLE interface.cartera_operaciones (
+	 fecha_proceso              date not null
+	,rut                        varchar(20) not null
+	,cod_persona                varchar(50) not null
+	,cod_operacion              varchar(50) not null
+	,cod_titulo_3               varchar(50) not null
+	,cod_deudor                 varchar(50) not null
+	,cod_tipo_obligacion        varchar(50) not null
+	,fecha_otorgamiento         date not null
+	,carga_financiera           numeric(22,4) not null
+	,fecha_extincion            date not null
+	,gar_real_inmobiliaria      numeric(22,4) not null
+	,gar_real_mobiliaria        numeric(22,4) not null
+	,gar_financiera             numeric(22,4) not null
+	,gar_personal               numeric(22,4) not null
+	,monto_original             numeric(22,4) not null
+	,capital                    numeric(22,4) not null
+	,interes                    numeric(22,4) not null
+	,otros                      numeric(22,4) not null  
+	,cod_moneda                 varchar(50) not null 
+	,fecha_aceleracion          date not null
+	,deuda_renegociada          varchar(2) not null
+	,operación_desfasada        varchar(2) not null
+	,fecha_a_rectificar         date not null
+	,fecha_rectificacion        date not null
+	,causal_rectificacion       varchar(2) not null
+	,numero_solicitud           varchar(50) not null
+	,valor_contable             numeric(22,4) not null	
+);
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'historico'
+        AND table_name = 'cartera_operaciones'
+    ) THEN
+        EXECUTE 'DROP TABLE historico.cartera_operaciones';
+    END IF;
+END;
+$$;
+
+-- Tabla historico.cartera_operaciones
+
+CREATE TABLE historico.cartera_operaciones (
+	 fecha_proceso              date not null
+	,rut                        varchar(20) not null
+	,cod_persona                varchar(50) not null
+	,cod_operacion              varchar(50) not null
+	,cod_titulo_3               varchar(50) not null
+	,cod_deudor                 varchar(50) not null
+	,cod_tipo_obligacion        varchar(50) not null
+	,fecha_otorgamiento         date not null
+	,carga_financiera           numeric(22,4) not null
+	,fecha_extincion            date not null
+	,gar_real_inmobiliaria      numeric(22,4) not null
+	,gar_real_mobiliaria        numeric(22,4) not null
+	,gar_financiera             numeric(22,4) not null
+	,gar_personal               numeric(22,4) not null
+	,monto_original             numeric(22,4) not null
+	,capital                    numeric(22,4) not null
+	,interes                    numeric(22,4) not null
+	,otros                      numeric(22,4) not null  
+	,cod_moneda                 varchar(50) not null 
+	,fecha_aceleracion          date not null
+	,deuda_renegociada          varchar(2) not null
+	,operación_desfasada        varchar(2) not null
+	,fecha_a_rectificar         date not null
+	,fecha_rectificacion        date not null
+	,causal_rectificacion       varchar(2) not null
+	,numero_solicitud           varchar(50) not null
+	,valor_contable             numeric(22,4) not null	
+);
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'respaldo'
+        AND table_name = 'cartera_operaciones'
+    ) THEN
+        EXECUTE 'DROP TABLE respaldo.cartera_operaciones';
+    END IF;
+END;
+$$;
+
+-- Tabla respaldo.cartera_operaciones
+
+CREATE TABLE respaldo.cartera_operaciones (
 	 fecha_proceso              date not null
 	,rut                        varchar(20) not null
 	,cod_persona                varchar(50) not null
