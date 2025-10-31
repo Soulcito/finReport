@@ -16,12 +16,21 @@ set "DAGS_DIR=%cd%\dags"
 set "LOGS_DIR=%cd%\logs"
 set "PLUGINS_DIR=%cd%\plugins"
 
+:: Directorios locales para finReport
+
+set "INTERFACE=%cd%\finReport\interface"
+set "REPORTS=%cd%\finReport\reports"
+set "LOGS=%cd%\finReport\logs"
+
 :: ================================
 :: CREAR DIRECTORIOS SI NO EXISTEN
 :: ================================
 if not exist "%DAGS_DIR%" mkdir "%DAGS_DIR%"
 if not exist "%LOGS_DIR%" mkdir "%LOGS_DIR%"
 if not exist "%PLUGINS_DIR%" mkdir "%PLUGINS_DIR%"
+if not exist "%INTERFACE%" mkdir "%INTERFACE%"
+if not exist "%REPORTS%" mkdir "%REPORTS%"
+if not exist "%LOGS%" mkdir "%LOGS%"
 
 echo ================================
 echo   Verificando imagen: %IMAGE_NAME%

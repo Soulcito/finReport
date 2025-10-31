@@ -13,10 +13,15 @@ DAGS_DIR="$(pwd)/dags"
 LOGS_DIR="$(pwd)/logs"
 PLUGINS_DIR="$(pwd)/plugins"
 
+# Directorios locales para finReport
+INTERFACE="$(pwd)/finReport/interface"
+REPORTS="$(pwd)/finReport/reports"
+LOGS="$(pwd)/finReport/logs"
+
 # ================================
 # CREAR DIRECTORIOS SI NO EXISTEN
 # ================================
-mkdir -p "$DAGS_DIR" "$LOGS_DIR" "$PLUGINS_DIR"
+mkdir -p "$DAGS_DIR" "$LOGS_DIR" "$PLUGINS_DIR" "$INTERFACE" "$REPORTS" "$LOGS"
 
 echo "================================"
 echo "  Verificando imagen: $IMAGE_NAME"
