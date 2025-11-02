@@ -11,16 +11,17 @@ set "CONTAINER_NAME=airflow"
 set "PORT_HOST=8181"
 set "SERVER_HOST=localhost"
 
-:: Directorios locales para persistencia
+:: Directorios locales para persistencia de Airflow
 set "DAGS_DIR=%cd%\dags"
 set "LOGS_DIR=%cd%\logs"
 set "PLUGINS_DIR=%cd%\plugins"
 
 :: Directorios locales para finReport
-
-set "INTERFACE=%cd%\finReport\interface"
-set "REPORTS=%cd%\finReport\reports"
-set "LOGS=%cd%\finReport\logs"
+set "FINREPORT_DIR=%cd%\finReport"
+set "INTERFACE=%FINREPORT_DIR%\interface"
+set "REPORTS=%FINREPORT_DIR%\reports"
+set "LOGS_FINREPORT=%FINREPORT_DIR%\logs"
+set "MANTENEDORES=%FINREPORT_DIR%\mantenedores"
 
 :: ================================
 :: CREAR DIRECTORIOS SI NO EXISTEN
@@ -28,9 +29,21 @@ set "LOGS=%cd%\finReport\logs"
 if not exist "%DAGS_DIR%" mkdir "%DAGS_DIR%"
 if not exist "%LOGS_DIR%" mkdir "%LOGS_DIR%"
 if not exist "%PLUGINS_DIR%" mkdir "%PLUGINS_DIR%"
+if not exist "%FINREPORT_DIR%" mkdir "%FINREPORT_DIR%"
 if not exist "%INTERFACE%" mkdir "%INTERFACE%"
 if not exist "%REPORTS%" mkdir "%REPORTS%"
-if not exist "%LOGS%" mkdir "%LOGS%"
+if not exist "%LOGS_FINREPORT%" mkdir "%LOGS_FINREPORT%"
+if not exist "%MANTENEDORES%" mkdir "%MANTENEDORES%"
+
+:: ================================
+:: MOVER CONTENIDO DE /mantenedores → /finReport/mantenedores
+:: ================================
+if exist "%cd%\mantenedores" (
+    echo Moviendo contenido desde carpeta raiz "mantenedores" a "%MANTENEDORES%"
+    xcopy "%cd%\mantenedores\*" "%MANTENEDORES%\" /E /Y >nul
+    echo Limpiando carpeta raiz "mantenedores"...
+    rmdir /S /Q "%cd%\mantenedores"
+)
 
 echo ================================
 echo   Verificando imagen: %IMAGE_NAME%
@@ -103,6 +116,10 @@ if %errorlevel%==0 (
       -v "%DAGS_DIR%:/opt/airflow/dags" ^
       -v "%LOGS_DIR%:/opt/airflow/logs" ^
       -v "%PLUGINS_DIR%:/opt/airflow/plugins" ^
+      -v "%INTERFACE%:/opt/airflow/finReport/interface" ^
+      -v "%REPORTS%:/opt/airflow/finReport/reports" ^
+      -v "%LOGS_FINREPORT%:/opt/airflow/finReport/logs" ^
+      -v "%MANTENEDORES%:/opt/airflow/finReport/mantenedores" ^
       %IMAGE_NAME%
 )
 
