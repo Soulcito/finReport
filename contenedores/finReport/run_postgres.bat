@@ -10,6 +10,7 @@ set "IMAGE_NAME=finreport"
 set "CONTAINER_NAME=finreport"
 set "PORT_HOST=25433"
 set "SERVER_HOST=localhost"
+set "NETWORK_NAME=finreport-net"
 
 set "POSTGRES_DB=finreport_db"
 set "POSTGRES_USER=finreport_user"
@@ -23,6 +24,26 @@ set "DATA_DIR=%cd%\pgdata"
 if not exist "%DATA_DIR%" (
     echo Creando directorio de datos...
     mkdir "%DATA_DIR%"
+)
+
+:: ==========================================
+:: VERIFICAR / CREAR RED DOCKER
+:: ==========================================
+echo ================================
+echo   Verificando red Docker: %NETWORK_NAME%
+echo ================================
+docker network inspect %NETWORK_NAME% >nul 2>&1
+if %errorlevel% neq 0 (
+    echo La red no existe. Creando red %NETWORK_NAME%...
+    docker network create %NETWORK_NAME%
+    if %errorlevel% equ 0 (
+        echo Red %NETWORK_NAME% creada correctamente.
+    ) else (
+        echo Error al crear la red %NETWORK_NAME%.
+        exit /b 1
+    )
+) else (
+    echo Red %NETWORK_NAME% ya existe.
 )
 
 :: ==========================================
@@ -65,6 +86,7 @@ echo   Iniciando contenedor nuevo
 echo ================================
 docker run -d ^
   --name %CONTAINER_NAME% ^
+  --network %NETWORK_NAME% ^
   -e POSTGRES_DB=%POSTGRES_DB% ^
   -e POSTGRES_USER=%POSTGRES_USER% ^
   -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^

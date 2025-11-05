@@ -7,6 +7,7 @@ set -e
 IMAGE_NAME="finreport"
 CONTAINER_NAME="finreport"
 PORT_HOST=25433
+NETWORK_NAME="finreport-net"
 
 POSTGRES_DB="finreport_db"
 POSTGRES_USER="finreport_user"
@@ -23,10 +24,28 @@ if [ ! -d "$DATA_DIR" ]; then
 fi
 
 # ==========================================
+# VERIFICAR / CREAR RED DOCKER
+# ==========================================
+echo "==============================="
+echo "Verificando red Docker: $NETWORK_NAME"
+echo "==============================="
+if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
+  echo "La red no existe. Creando red $NETWORK_NAME..."
+  if docker network create "$NETWORK_NAME" >/dev/null 2>&1; then
+    echo "Red $NETWORK_NAME creada correctamente."
+  else
+    echo " Error al crear la red $NETWORK_NAME."
+    exit 1
+  fi
+else
+  echo "Red $NETWORK_NAME ya existe."
+fi
+
+# ==========================================
 # VERIFICAR IMAGEN
 # ==========================================
 if docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
-  echo " Imagen $IMAGE_NAME encontrada."
+  echo "Imagen $IMAGE_NAME encontrada."
   read -p "¿Deseas reconstruir la imagen? (s/n): " REBUILD
   if [[ "$REBUILD" == "s" || "$REBUILD" == "S" ]]; then
     echo "Eliminando imagen existente..."
@@ -60,6 +79,7 @@ echo "================================"
 
 docker run -d \
   --name "$CONTAINER_NAME" \
+  --network "$NETWORK_NAME" \
   -e POSTGRES_DB="$POSTGRES_DB" \
   -e POSTGRES_USER="$POSTGRES_USER" \
   -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
@@ -68,11 +88,11 @@ docker run -d \
   "$IMAGE_NAME"
 
 if [ $? -ne 0 ]; then
-  echo "Error al iniciar el contenedor."
+  echo " Error al iniciar el contenedor."
   exit 1
 fi
 
 echo "================================"
-echo "Contenedor PostgreSQL listo"
+echo " Contenedor PostgreSQL listo"
 echo "================================"
 docker ps | grep "$CONTAINER_NAME"

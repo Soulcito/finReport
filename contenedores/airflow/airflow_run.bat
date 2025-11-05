@@ -10,6 +10,7 @@ set "IMAGE_NAME=airflow-3.1.0"
 set "CONTAINER_NAME=airflow"
 set "PORT_HOST=8181"
 set "SERVER_HOST=localhost"
+set "NETWORK_NAME=finreport-net"
 
 :: Directorios locales para persistencia de Airflow
 set "DAGS_DIR=%cd%\dags"
@@ -84,6 +85,24 @@ if "%REBUILD_IMAGE%"=="1" (
 
 echo.
 echo ================================
+echo   Verificando red Docker: %NETWORK_NAME%
+echo ================================
+docker network inspect %NETWORK_NAME% >nul 2>&1
+if %errorlevel% neq 0 (
+    echo La red no existe. Creando red %NETWORK_NAME%...
+    docker network create %NETWORK_NAME%
+    if %errorlevel% equ 0 (
+        echo Red %NETWORK_NAME% creada correctamente.
+    ) else (
+        echo Error al crear la red %NETWORK_NAME%.
+        exit /b 1
+    )
+) else (
+    echo Red %NETWORK_NAME% ya existe.
+)
+
+echo.
+echo ================================
 echo   Verificando contenedor: %CONTAINER_NAME%
 echo ================================
 
@@ -112,6 +131,7 @@ if %errorlevel%==0 (
 ) else (
     echo Creando nuevo contenedor con persistencia...
     docker run -d --name %CONTAINER_NAME% ^
+      --network %NETWORK_NAME% ^
       -p %PORT_HOST%:8080 ^
       -v "%DAGS_DIR%:/opt/airflow/dags" ^
       -v "%LOGS_DIR%:/opt/airflow/logs" ^
@@ -124,5 +144,16 @@ if %errorlevel%==0 (
 )
 
 echo.
+echo Esperando a que Airflow inicialice...
+timeout /t 20 >nul
+
+echo.
+echo ================================
 echo Airflow disponible en: http://%SERVER_HOST%:%PORT_HOST%
+echo ================================
+echo.
+echo Para ver las credenciales automáticas generadas por Airflow:
+echo    docker logs %CONTAINER_NAME% ^| find "user"
+echo.
+echo (El usuario admin se crea automáticamente por airflow standalone)
 pause
