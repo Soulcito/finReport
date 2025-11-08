@@ -31,7 +31,7 @@ BEGIN
 END;
 $$;
 
--- Creacion de schema log, usado para los log de la carga de las interfaces
+-- Creacion de schema log, usado para los logs
 DO
 $$
 BEGIN

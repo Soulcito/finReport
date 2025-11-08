@@ -100,7 +100,7 @@ docker run -d \
 
 echo
 echo "Esperando a que Airflow inicialice..."
-sleep 20
+sleep 10
 
 echo
 echo "================================"

@@ -145,7 +145,7 @@ if %errorlevel%==0 (
 
 echo.
 echo Esperando a que Airflow inicialice...
-timeout /t 20 >nul
+timeout /t 10 >nul
 
 echo.
 echo ================================

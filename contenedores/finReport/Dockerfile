@@ -15,6 +15,7 @@ COPY ./init.sql /docker-entrypoint-initdb.d/init.sql
 COPY ./interfaces /docker-entrypoint-initdb.d/interfaces
 COPY ./tablas_internas /docker-entrypoint-initdb.d/tablas_internas
 COPY ./data /docker-entrypoint-initdb.d/data
+COPY ./logss /docker-entrypoint-initdb.d/logss
 
 RUN chown -R postgres:postgres /etc/postgresql && \
     chmod 640 /etc/postgresql/postgresql.conf

@@ -6,93 +6,124 @@ set -e
 # ==========================================
 IMAGE_NAME="finreport"
 CONTAINER_NAME="finreport"
-PORT_HOST=25433
+PORT_HOST="25433"
+SERVER_HOST="localhost"
 NETWORK_NAME="finreport-net"
 
 POSTGRES_DB="finreport_db"
 POSTGRES_USER="finreport_user"
 POSTGRES_PASSWORD="Finr3p0rt@2025"
 
-DATA_DIR="$(pwd)/pgdata"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DATA_DIR="$SCRIPT_DIR/pgdata"
 
 # ==========================================
 # CREAR DIRECTORIOS SI NO EXISTEN
 # ==========================================
 if [ ! -d "$DATA_DIR" ]; then
-  echo "Creando directorio de datos..."
-  mkdir -p "$DATA_DIR"
+    echo "Creando directorio de datos..."
+    mkdir -p "$DATA_DIR"
 fi
 
-# ==========================================
-# VERIFICAR / CREAR RED DOCKER
-# ==========================================
 echo "==============================="
-echo "Verificando red Docker: $NETWORK_NAME"
+echo "  Verificando imagen: $IMAGE_NAME"
 echo "==============================="
-if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
-  echo "La red no existe. Creando red $NETWORK_NAME..."
-  if docker network create "$NETWORK_NAME" >/dev/null 2>&1; then
-    echo "Red $NETWORK_NAME creada correctamente."
-  else
-    echo " Error al crear la red $NETWORK_NAME."
-    exit 1
-  fi
+
+REBUILD_IMAGE=0
+
+# Verificar si existe la imagen
+if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+    echo "Imagen no encontrada. Construyendo nueva..."
+    docker build -t "$IMAGE_NAME" .
 else
-  echo "Red $NETWORK_NAME ya existe."
+    echo "La imagen '$IMAGE_NAME' ya existe."
+    read -p "¿Desea reconstruirla desde el Dockerfile y reiniciar el contenedor? (s/N): " recreate
+    if [[ "${recreate,,}" == "s" ]]; then
+        REBUILD_IMAGE=1
+    else
+        echo "Se mantiene la imagen existente."
+    fi
 fi
 
 # ==========================================
-# VERIFICAR IMAGEN
+# SI EL USUARIO QUIERE RECREAR, ELIMINAMOS EL CONTENEDOR
 # ==========================================
-if docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
-  echo "Imagen $IMAGE_NAME encontrada."
-  read -p "¿Deseas reconstruir la imagen? (s/n): " REBUILD
-  if [[ "$REBUILD" == "s" || "$REBUILD" == "S" ]]; then
-    echo "Eliminando imagen existente..."
-    docker rmi -f "$IMAGE_NAME"
+if [ "$REBUILD_IMAGE" -eq 1 ]; then
+    echo
+    echo "Verificando si existe el contenedor $CONTAINER_NAME..."
+    if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        echo "Deteniendo y eliminando contenedor anterior..."
+        docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
+        docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
+    fi
     echo "Reconstruyendo imagen..."
     docker build -t "$IMAGE_NAME" .
-  else
-    echo "Manteniendo imagen existente."
-  fi
+fi
+
+# ==========================================
+# VERIFICAR RED DOCKER
+# ==========================================
+echo
+echo "==============================="
+echo "  Verificando red Docker: $NETWORK_NAME"
+echo "==============================="
+if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
+    echo "La red no existe. Creando red $NETWORK_NAME..."
+    if docker network create "$NETWORK_NAME"; then
+        echo "Red $NETWORK_NAME creada correctamente."
+    else
+        echo "Error al crear la red $NETWORK_NAME."
+        exit 1
+    fi
 else
-  echo "Imagen no encontrada. Construyendo nueva..."
-  docker build -t "$IMAGE_NAME" .
+    echo "Red $NETWORK_NAME ya existe."
 fi
 
 # ==========================================
-# VERIFICAR CONTENEDOR EXISTENTE
+# VERIFICAR CONTENEDOR
 # ==========================================
-if docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}$"; then
-  echo "Contenedor $CONTAINER_NAME encontrado."
-  echo "Deteniendo y eliminando contenedor previo..."
-  docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
-  docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
+echo
+echo "==============================="
+echo "  Verificando contenedor: $CONTAINER_NAME"
+echo "==============================="
+
+if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+    if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        echo "El contenedor $CONTAINER_NAME está corriendo."
+        read -p "¿Desea reiniciarlo? (s/N): " restart
+        if [[ "${restart,,}" == "s" ]]; then
+            echo "Reiniciando contenedor..."
+            docker restart "$CONTAINER_NAME"
+        else
+            echo "No se reiniciará el contenedor."
+        fi
+    else
+        echo "El contenedor existe pero está detenido."
+        read -p "¿Desea iniciarlo? (s/N): " startit
+        if [[ "${startit,,}" == "s" ]]; then
+            docker start "$CONTAINER_NAME"
+        else
+            echo "No se iniciará el contenedor."
+        fi
+    fi
+else
+    echo "Creando nuevo contenedor con persistencia..."
+    docker run -d \
+        --name "$CONTAINER_NAME" \
+        --network "$NETWORK_NAME" \
+        -e POSTGRES_DB="$POSTGRES_DB" \
+        -e POSTGRES_USER="$POSTGRES_USER" \
+        -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+        -p "$PORT_HOST:5432" \
+        -v "$DATA_DIR:/var/lib/postgresql/data" \
+        "$IMAGE_NAME"
 fi
 
-# ==========================================
-# CREAR NUEVO CONTENEDOR
-# ==========================================
-echo "================================"
-echo "Iniciando nuevo contenedor"
-echo "================================"
-
-docker run -d \
-  --name "$CONTAINER_NAME" \
-  --network "$NETWORK_NAME" \
-  -e POSTGRES_DB="$POSTGRES_DB" \
-  -e POSTGRES_USER="$POSTGRES_USER" \
-  -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
-  -p "$PORT_HOST":5432 \
-  -v "$DATA_DIR":/var/lib/postgresql/data \
-  "$IMAGE_NAME"
-
-if [ $? -ne 0 ]; then
-  echo " Error al iniciar el contenedor."
-  exit 1
-fi
-
-echo "================================"
-echo " Contenedor PostgreSQL listo"
-echo "================================"
+echo
+echo "==============================="
+echo "Contenedor PostgreSQL listo"
+echo "==============================="
 docker ps | grep "$CONTAINER_NAME"
+
+echo
+read -p "Presione Enter para salir..."

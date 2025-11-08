@@ -26,9 +26,44 @@ if not exist "%DATA_DIR%" (
     mkdir "%DATA_DIR%"
 )
 
-:: ==========================================
-:: VERIFICAR / CREAR RED DOCKER
-:: ==========================================
+echo ================================
+echo   Verificando imagen: %IMAGE_NAME%
+echo ================================
+
+set "REBUILD_IMAGE=0"
+
+:: Verificar si existe la imagen
+docker image inspect %IMAGE_NAME% >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Imagen no encontrada. Construyendo nueva...
+    docker build -t %IMAGE_NAME% .
+) else (
+    echo La imagen "%IMAGE_NAME%" ya existe.
+    set /p recreate="¿Desea reconstruirla desde el Dockerfile y reiniciar el contenedor? (s/N): "
+    if /i "!recreate!"=="s" (
+        set "REBUILD_IMAGE=1"
+    ) else (
+        echo Se mantiene la imagen existente.
+    )
+)
+
+:: ================================
+:: SI EL USUARIO QUIERE RECREAR, ELIMINAMOS EL CONTENEDOR
+:: ================================
+if "%REBUILD_IMAGE%"=="1" (
+    echo.
+    echo Verificando si existe el contenedor %CONTAINER_NAME%...
+    docker ps -a --format "{{.Names}}" | find "%CONTAINER_NAME%" >nul
+    if %errorlevel%==0 (
+        echo Deteniendo y eliminando contenedor anterior...
+        docker stop %CONTAINER_NAME% >nul 2>&1
+        docker rm %CONTAINER_NAME% >nul 2>&1
+    )
+    echo Reconstruyendo imagen...
+    docker build -t %IMAGE_NAME% .
+)
+
+echo.
 echo ================================
 echo   Verificando red Docker: %NETWORK_NAME%
 echo ================================
@@ -46,58 +81,44 @@ if %errorlevel% neq 0 (
     echo Red %NETWORK_NAME% ya existe.
 )
 
-:: ==========================================
-:: VERIFICAR IMAGEN EXISTENTE
-:: ==========================================
-docker image inspect %IMAGE_NAME% >nul 2>&1
-if %errorlevel% equ 0 (
-    echo Imagen %IMAGE_NAME% encontrada.
-    set /p REBUILD="Desea reconstruir la imagen? (s/n): "
-    if /i "%REBUILD%"=="s" (
-        echo Eliminando imagen existente...
-        docker rmi -f %IMAGE_NAME%
-        echo Reconstruyendo imagen...
-        docker build -t %IMAGE_NAME% .
+echo.
+echo ================================
+echo   Verificando contenedor: %CONTAINER_NAME%
+echo ================================
+
+:: Verificar si el contenedor existe
+docker ps -a --format "{{.Names}}" | find "%CONTAINER_NAME%" >nul
+if %errorlevel%==0 (
+    docker ps --format "{{.Names}}" | find "%CONTAINER_NAME%" >nul
+    if %errorlevel%==0 (
+        echo El contenedor %CONTAINER_NAME% está corriendo.
+        set /p restart="¿Desea reiniciarlo? (s/N): "
+        if /i "!restart!"=="s" (
+            echo Reiniciando contenedor...
+            docker restart %CONTAINER_NAME%
+        ) else (
+            echo No se reiniciará el contenedor.
+        )
     ) else (
-        echo Manteniendo imagen existente.
+        echo El contenedor existe pero está detenido.
+        set /p startit="¿Desea iniciarlo? (s/N): "
+        if /i "!startit!"=="s" (
+            docker start %CONTAINER_NAME%
+        ) else (
+            echo No se iniciará el contenedor.
+        )
     )
 ) else (
-    echo Imagen no encontrada. Construyendo nueva...
-    docker build -t %IMAGE_NAME% .
-)
-
-:: ==========================================
-:: VERIFICAR SI EXISTE CONTENEDOR
-:: ==========================================
-for /f "tokens=*" %%i in ('docker ps -a -q -f "name=%CONTAINER_NAME%"') do set CONTAINER_ID=%%i
-
-if defined CONTAINER_ID (
-    echo Contenedor %CONTAINER_NAME% encontrado.
-    echo Deteniendo y eliminando contenedor previo...
-    docker stop %CONTAINER_NAME% >nul 2>&1
-    docker rm %CONTAINER_NAME% >nul 2>&1
-)
-
-:: ==========================================
-:: CREAR CONTENEDOR NUEVO
-:: ==========================================
-echo ================================
-echo   Iniciando contenedor nuevo
-echo ================================
-docker run -d ^
-  --name %CONTAINER_NAME% ^
-  --network %NETWORK_NAME% ^
-  -e POSTGRES_DB=%POSTGRES_DB% ^
-  -e POSTGRES_USER=%POSTGRES_USER% ^
-  -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
-  -p %PORT_HOST%:5432 ^
-  -v "%DATA_DIR%:/var/lib/postgresql/data" ^
-  %IMAGE_NAME%
-
-if %errorlevel% neq 0 (
-    echo Error al iniciar el contenedor.
-    pause
-    exit /b 1
+    echo Creando nuevo contenedor con persistencia...
+	docker run -d ^
+	  --name %CONTAINER_NAME% ^
+	  --network %NETWORK_NAME% ^
+	  -e POSTGRES_DB=%POSTGRES_DB% ^
+	  -e POSTGRES_USER=%POSTGRES_USER% ^
+	  -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
+	  -p %PORT_HOST%:5432 ^
+	  -v "%DATA_DIR%:/var/lib/postgresql/data" ^
+	  %IMAGE_NAME%
 )
 
 echo ================================
