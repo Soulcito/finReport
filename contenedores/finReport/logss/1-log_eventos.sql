@@ -19,6 +19,8 @@ CREATE TABLE log.log_eventos (
     id SERIAL PRIMARY KEY,
     fecha TIMESTAMP,
     nivel VARCHAR(10),
+	dag varchar(50),
+	procedimiento varchar(50),
     mensaje TEXT
 );
 

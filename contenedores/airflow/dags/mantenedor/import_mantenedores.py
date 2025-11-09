@@ -35,9 +35,9 @@ class PostgresLogHandler(logging.Handler):
             conn = psycopg2.connect(**self.conn_params)
             cur = conn.cursor()
             cur.execute("""
-                INSERT INTO log.log_eventos (fecha, nivel, mensaje)
-                VALUES (%s, %s, %s)
-            """, (datetime.now(), record.levelname, log_entry))
+                INSERT INTO log.log_eventos (fecha, nivel, dag, procedimiento, mensaje)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (datetime.now(), record.levelname, "import_mantenedores", "", log_entry))
             conn.commit()
             cur.close()
         except Exception as e:
@@ -135,15 +135,15 @@ def process_sheet(xls, sheet_name, cur, conn, delete_only=False):
 # DAG
 # ==============================
 with DAG(
-    dag_id="import_mantenedores_dag",
+    dag_id="import_mantenedores",
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
-    tags=["import", "postgres", "excel", "relations", "logs"],
+    tags=["mantenedor"],
 ) as dag:
 
     import_task = PythonOperator(
-        task_id="load_excel_with_relations",
+        task_id="import_mantenedores",
         python_callable=load_excel_with_relations
     )
 
