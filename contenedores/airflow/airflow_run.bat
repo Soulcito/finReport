@@ -46,6 +46,7 @@ if exist "%cd%\mantenedores" (
     rmdir /S /Q "%cd%\mantenedores"
 )
 
+
 echo ================================
 echo   Verificando imagen: %IMAGE_NAME%
 echo ================================
