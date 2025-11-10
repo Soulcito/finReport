@@ -26,7 +26,7 @@ logger.info("Iniciando carga de mantenedores")
 # ==============================
 def load_excel_with_relations():
     logger.info(f"🔍 Buscando archivos .xlsx en {EXCEL_DIR}")
-    files = [f for f in os.listdir(EXCEL_DIR) if f.endswith('.xlsx')]
+    files = [f for f in os.listdir(EXCEL_DIR) if f.lower().endswith('.xlsx')]
     if not files:
         raise Exception(f"No se encontraron archivos .xlsx en {EXCEL_DIR}")
 
