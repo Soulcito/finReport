@@ -15,7 +15,8 @@ import time
 # CONFIGURACIÓN
 # ==============================
 INTERFACE_DIR = "/opt/airflow/finReport/interface"
-logger = get_logger("import_interfaz", PG_CONN)
+name_dag = "import_interfaz"
+logger = get_logger(name_dag, PG_CONN)
 logger.info("Iniciando carga de interfaces")
 
 # ==============================
@@ -34,10 +35,10 @@ def consulta_sql(schema, table, where=None, params=None):
         if where:
             query += sql.SQL(" WHERE ") + sql.SQL(where)
         df = pd.read_sql(query.as_string(conn), conn, params=params)
-        logger.info(f"Datos leídos de {full_name}", extra={"procedimiento": full_name})
+        logger.info(f"Datos leídos de {full_name}")
         return df
     except Exception as e:
-        logger.error(f"Error leyendo {full_name}: {e}", extra={"procedimiento": full_name})
+        logger.error(f"Error leyendo {full_name}: {e}")
         raise
     finally:
         if conn is not None:
@@ -51,22 +52,22 @@ def load_interfaz():
     files = [f for f in os.listdir(INTERFACE_DIR) if f.lower().endswith('.txt')]
 
     if not files:
-        logger.warning(f"No se encontraron archivos .txt en {INTERFACE_DIR}", extra={"procedimiento": "inicio"})
+        logger.warning(f"No se encontraron archivos .txt en {INTERFACE_DIR}")
         return
 
     for file in files:
         start_time = time.time()
         file_path = os.path.join(INTERFACE_DIR, file)
         cod = os.path.basename(file_path)[:3]
-        logger.info(f"Iniciando procesamiento de {file} (cod={cod})", extra={"procedimiento": "inicio"})
+        logger.info(f"Iniciando procesamiento de {file} (cod={cod})")
 
         try:
             # 1) Leer archivo
             try:
                 df_txt = pd.read_csv(file_path, sep=";", encoding="utf-8")
-                logger.info(f"Archivo leído correctamente ({len(df_txt)} filas)", extra={"procedimiento": "lectura"})
+                logger.info(f"Archivo leído correctamente ({len(df_txt)} filas)")
             except Exception as e:
-                logger.error(f"Error leyendo archivo {file}: {e}", extra={"procedimiento": "lectura"})
+                logger.error(f"Error leyendo archivo {file}: {e}")
                 continue
 
             # 2) Obtener tabla destino
@@ -75,9 +76,9 @@ def load_interfaz():
                 if df_interfaz.empty:
                     raise Exception(f"No existe configuración para cod={cod}")
                 table_destino = df_interfaz.iloc[0]["interfaz"]
-                logger.info(f"Tabla destino: {table_destino}", extra={"procedimiento": "consulta_interfaz"})
+                logger.info(f"Tabla destino: {table_destino}")
             except Exception as e:
-                logger.error(f"Error consultando interno.interfaz: {e}", extra={"procedimiento": "consulta_interfaz"})
+                logger.error(f"Error consultando interno.interfaz: {e}")
                 continue
 
             # 3) Obtener estructura
@@ -87,17 +88,14 @@ def load_interfaz():
                     raise Exception(f"No hay campos definidos en interno.interfaz_rel para cod={cod}")
                 columnas = df_campos["campo"].tolist()
                 tipos = df_campos["tipo_dato"].tolist()
-                logger.info(f"Campos definidos: {len(columnas)}", extra={"procedimiento": "consulta_interfaz_rel"})
+                logger.info(f"Campos definidos: {len(columnas)}")
             except Exception as e:
-                logger.error(f"Error consultando interno.interfaz_rel: {e}", extra={"procedimiento": "consulta_interfaz_rel"})
+                logger.error(f"Error consultando interno.interfaz_rel: {e}")
                 continue
 
             # 4) Validar columnas
             if len(df_txt.columns) != len(columnas):
-                logger.error(
-                    f"Columnas no coinciden para {file} (archivo={len(df_txt.columns)}, definición={len(columnas)})",
-                    extra={"procedimiento": "validacion_columnas"}
-                )
+                logger.error(f"Columnas no coinciden para {file} (archivo={len(df_txt.columns)}, definición={len(columnas)})")
                 continue
 
             # 5) Conversión de tipos
@@ -112,9 +110,9 @@ def load_interfaz():
                         df_txt[col] = pd.to_datetime(df_txt[col], format="%Y%m%d", errors="coerce").dt.date
                     else:
                         df_txt[col] = df_txt[col].astype(str)
-                logger.info(f"Tipos aplicados: {dict(zip(columnas, tipos))}", extra={"procedimiento": "conversion_tipos"})
+                logger.info(f"Tipos aplicados: {dict(zip(columnas, tipos))}")
             except Exception as e:
-                logger.error(f"Error convirtiendo tipos en {file}: {e}", extra={"procedimiento": "conversion_tipos"})
+                logger.error(f"Error convirtiendo tipos en {file}: {e}")
                 continue
 
             # 6) Inserción en tabla destino
@@ -138,7 +136,7 @@ def load_interfaz():
             except Exception as e:
                 if conn:
                     conn.rollback()
-                logger.error(f"Error insertando en {table_destino}: {e}", extra={"procedimiento": "insercion_datos"})
+                logger.error(f"Error insertando en {table_destino}: {e}")
                 continue
             finally:
                 if conn:
@@ -146,17 +144,17 @@ def load_interfaz():
 
             # 7) Fin exitoso
             duracion = round(time.time() - start_time, 2)
-            logger.info(f"Finalizado archivo {file} en {duracion} segundos", extra={"procedimiento": "fin"})
+            logger.info(f"Finalizado archivo {file} en {duracion} segundos")
 
         except Exception as e:
-            logger.error(f"Error inesperado procesando {file}: {e}", extra={"procedimiento": "general"})
+            logger.error(f"Error inesperado procesando {file}: {e}")
             continue
 
 # ==============================
 # DAG
 # ==============================
 with DAG(
-    dag_id="import_interfaz",
+    dag_id=name_dag,
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
@@ -164,7 +162,7 @@ with DAG(
 ) as dag:
 
     import_task = PythonOperator(
-        task_id="import_interfaz",
+        task_id=name_dag,
         python_callable=load_interfaz
     )
 
