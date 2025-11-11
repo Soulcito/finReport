@@ -17,8 +17,9 @@ EXCEL_DIR = "/opt/airflow/finReport/mantenedores"
 # ==============================
 # CONFIGURACIÓN DE LOGGING
 # ==============================
-
-logger = get_logger("import_mantenedores", PG_CONN)
+dag_name = "import_mantenedores"
+proc_name = None
+logger = get_logger(dag_name, proc_name , PG_CONN)
 logger.info("Iniciando carga de mantenedores")
 
 # ==============================
@@ -94,7 +95,7 @@ def process_sheet(xls, sheet_name, cur, conn, delete_only=False):
 # DAG
 # ==============================
 with DAG(
-    dag_id="import_mantenedores",
+    dag_id=dag_name,
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
@@ -102,7 +103,7 @@ with DAG(
 ) as dag:
 
     import_task = PythonOperator(
-        task_id="import_mantenedores",
+        task_id=dag_name,
         python_callable=load_excel_with_relations
     )
 

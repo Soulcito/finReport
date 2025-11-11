@@ -6,10 +6,11 @@ import psycopg2
 
 class PostgresLogHandler(logging.Handler):
     """Handler que guarda logs en la tabla log.log_eventos."""
-    def __init__(self, conn_params, dag_name=""):
+    def __init__(self, conn_params, dag_name="", proc_name=""):
         super().__init__()
         self.conn_params = conn_params
         self.dag_name = dag_name
+        self.proc_name = proc_name
 
     def emit(self, record):
         log_entry = self.format(record)
@@ -24,7 +25,7 @@ class PostgresLogHandler(logging.Handler):
                 datetime.now(),
                 record.levelname,
                 self.dag_name,
-                getattr(record, "procedimiento", ""),
+                self.proc_name,
                 log_entry
             ))
             conn.commit()
@@ -36,13 +37,18 @@ class PostgresLogHandler(logging.Handler):
                 conn.close()
 
 
-def get_logger(dag_name: str, conn_params: dict):
+def get_logger(dag_name: str, proc_name: str, conn_params: dict):
     """
     Retorna un logger configurado para escribir tanto en consola como en PostgreSQL.
     """
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    logger = logging.getLogger(dag_name)
+    if dag_name:
+        logger = logging.getLogger(dag_name)
+        proc_name = ""
+    if proc_name:
+        logger = logging.getLogger(proc_name)
+        dag_name = ""
     logger.setLevel(logging.INFO)
 
     # Evitar duplicados

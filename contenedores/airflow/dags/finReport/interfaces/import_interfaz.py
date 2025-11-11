@@ -8,15 +8,16 @@ import pandas as pd
 import psycopg2
 import os
 from psycopg2.extras import execute_values
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 import time
 
 # ==============================
 # CONFIGURACIÓN
 # ==============================
 INTERFACE_DIR = "/opt/airflow/finReport/interface"
-name_dag = "import_interfaz"
-logger = get_logger(name_dag, PG_CONN)
+dag_name = "import_interfaz"
+proc_name = None
+logger = get_logger(dag_name, proc_name, PG_CONN)
 logger.info("Iniciando carga de interfaces")
 
 # ==============================
@@ -43,11 +44,43 @@ def consulta_sql(schema, table, where=None, params=None):
     finally:
         if conn is not None:
             conn.close()
+            
+def safe_decimal(x, col):
+    try:
+        if pd.notnull(x):
+            return Decimal(str(x)).quantize(Decimal("0.0001"))
+        else:
+            return Decimal("0.0000")
+    except (InvalidOperation, ValueError) as e:
+        logger.error(f"Error convirtiendo el campo '{col}' de tipo numeric con valor '{x}' a Decimal: {e}")
+        return Decimal("0.0000")            
+    
+def safe_date(x, col):
+    try:
+        if pd.isnull(x) or str(x).strip() == "":
+            return datetime.strptime("19000101", "%Y%m%d").date()
+        return pd.to_datetime(str(x), format="%Y%m%d", errors="raise").date()
+    except Exception as e:
+        logger.error(f"Error convirtiendo el campo '{col}' de tipo date con valor '{x}' a fecha: {e}")
+        return datetime.strptime("19000101", "%Y%m%d").date()
+    
+def safe_string(x, col):
+    try:
+        if pd.isnull(x):
+            return ""
+        return str(x)
+    except Exception as e:
+        logger.error(f"Error convirtiendo el campo '{col}' de tipo string con valor '{x}' a string: {e}")
+        return ""    
 
 # ==============================
 # FUNCIÓN PRINCIPAL
 # ==============================
 def load_interfaz():
+    schema = "interno"
+    schema_destino = "interfaz"
+    tabla = "interfaz"
+    tabla_rel = "interfaz_rel"
     logger.info(f"Buscando archivos .txt en {INTERFACE_DIR}")
     files = [f for f in os.listdir(INTERFACE_DIR) if f.lower().endswith('.txt')]
 
@@ -72,25 +105,25 @@ def load_interfaz():
 
             # 2) Obtener tabla destino
             try:
-                df_interfaz = consulta_sql("interno", "interfaz", f"cod = '{cod}'")
+                df_interfaz = consulta_sql(schema, tabla, f"cod = '{cod}'")
                 if df_interfaz.empty:
                     raise Exception(f"No existe configuración para cod={cod}")
-                table_destino = df_interfaz.iloc[0]["interfaz"]
+                table_destino = df_interfaz.iloc[0][tabla]
                 logger.info(f"Tabla destino: {table_destino}")
             except Exception as e:
-                logger.error(f"Error consultando interno.interfaz: {e}")
+                logger.error(f"Error consultando {schema}.{tabla}: {e}")
                 continue
 
             # 3) Obtener estructura
             try:
-                df_campos = consulta_sql("interno", "interfaz_rel", f"cod = '{cod}'")
+                df_campos = consulta_sql(schema, tabla_rel, f"cod = '{cod}'")
                 if df_campos.empty:
-                    raise Exception(f"No hay campos definidos en interno.interfaz_rel para cod={cod}")
+                    raise Exception(f"No hay campos definidos en {schema}.{tabla_rel} para cod={cod}")
                 columnas = df_campos["campo"].tolist()
                 tipos = df_campos["tipo_dato"].tolist()
                 logger.info(f"Campos definidos: {len(columnas)}")
             except Exception as e:
-                logger.error(f"Error consultando interno.interfaz_rel: {e}")
+                logger.error(f"Error consultando {schema}.{tabla_rel}: {e}")
                 continue
 
             # 4) Validar columnas
@@ -103,13 +136,12 @@ def load_interfaz():
                 df_txt.columns = columnas
                 for col, tipo in zip(columnas, tipos):
                     if tipo == "numeric":
-                        df_txt[col] = df_txt[col].apply(
-                            lambda x: Decimal(str(x)).quantize(Decimal("0.0001")) if pd.notnull(x) else None
-                        )
+                        df_txt[col] = df_txt[col].apply(lambda x: safe_decimal(x, col))                            
+
                     elif tipo == "date":
-                        df_txt[col] = pd.to_datetime(df_txt[col], format="%Y%m%d", errors="coerce").dt.date
+                        df_txt[col] = df_txt[col].apply(lambda x: safe_date(x, col))
                     else:
-                        df_txt[col] = df_txt[col].astype(str)
+                        df_txt[col] = df_txt[col].apply(lambda x: safe_string(x, col))
                 logger.info(f"Tipos aplicados: {dict(zip(columnas, tipos))}")
             except Exception as e:
                 logger.error(f"Error convirtiendo tipos en {file}: {e}")
@@ -117,11 +149,11 @@ def load_interfaz():
 
             # 6) Inserción en tabla destino
             conn = None
-            try:
+            try:                
                 conn = psycopg2.connect(**PG_CONN)
                 cur = conn.cursor()
                 insert_query = sql.SQL("INSERT INTO {}.{} ({}) VALUES %s").format(
-                    sql.Identifier("interno"),
+                    sql.Identifier(schema_destino),
                     sql.Identifier(table_destino),
                     sql.SQL(", ").join(map(sql.Identifier, columnas))
                 )
@@ -129,14 +161,11 @@ def load_interfaz():
                 execute_values(cur, insert_query.as_string(conn), values)
                 conn.commit()
 
-                logger.info(
-                    f"{len(values)} filas insertadas en interno.{table_destino}",
-                    extra={"procedimiento": "insercion_datos"}
-                )
+                logger.info(f"{len(values)} filas insertadas en {schema_destino}.{table_destino}")
             except Exception as e:
                 if conn:
                     conn.rollback()
-                logger.error(f"Error insertando en {table_destino}: {e}")
+                logger.error(f"Error insertando en {schema_destino}.{table_destino}: {e}")
                 continue
             finally:
                 if conn:
@@ -154,7 +183,7 @@ def load_interfaz():
 # DAG
 # ==============================
 with DAG(
-    dag_id=name_dag,
+    dag_id=dag_name,
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
@@ -162,7 +191,7 @@ with DAG(
 ) as dag:
 
     import_task = PythonOperator(
-        task_id=name_dag,
+        task_id=dag_name,
         python_callable=load_interfaz
     )
 
