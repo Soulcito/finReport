@@ -56,14 +56,24 @@ def safe_decimal(x, col):
         return Decimal("0.0000")            
     
 def safe_date(x, col):
+    DEFAULT = datetime.strptime("19000101", "%Y%m%d").date()
+
     try:
-        if pd.isnull(x) or str(x).strip() == "":
-            return datetime.strptime("19000101", "%Y%m%d").date()
-        return pd.to_datetime(str(x), format="%Y%m%d", errors="raise").date()
+        if x is None:
+            return DEFAULT
+
+        value = str(x).strip()
+
+        if value == "" or value.lower() == "nan":
+            return DEFAULT
+
+        return datetime.strptime(value, "%Y%m%d").date()
+
     except Exception as e:
-        logger.error(f"Error convirtiendo el campo '{col}' de tipo date con valor '{x}' a fecha: {e}")
-        return datetime.strptime("19000101", "%Y%m%d").date()
-    
+        logger.error(
+            f"Error convirtiendo el campo '{col}' de tipo date con valor '{x}' a fecha: {e}"
+        )
+        return DEFAULT
 def safe_string(x, col):
     try:
         if pd.isnull(x):
@@ -78,7 +88,7 @@ def safe_string(x, col):
 # ==============================
 def load_interfaz():
     schema = "interno"
-    schema_destino = "interfaz"
+    schema_destino = "interface"
     tabla = "interfaz"
     tabla_rel = "interfaz_rel"
     logger.info(f"Buscando archivos .txt en {INTERFACE_DIR}")
