@@ -1,4 +1,4 @@
-CREATE OR REPLACE PROCEDURE proceso.val_interfaz_A01()
+CREATE OR REPLACE PROCEDURE proceso.val_interfaz_a01()
 LANGUAGE plpgsql
 AS $$
 DECLARE
