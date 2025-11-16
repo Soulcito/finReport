@@ -33,7 +33,7 @@ BEGIN
 				,rec.interes_moroso
 				,rec.interes_pagado
 				,rec.otros
-				,'cod_operacion: No se encuentra operacion en interfaz cartera_operaciones'
+				,'B01-00001; cod_operacion: No se encuentra operacion en interfaz cartera_operaciones'
 			);
 
 		END LOOP;
