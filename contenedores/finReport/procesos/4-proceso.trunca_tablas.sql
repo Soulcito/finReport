@@ -12,35 +12,35 @@ BEGIN
 		
 		TRUNCATE TABLE tmp.cartera_operaciones;
 		TRUNCATE TABLE tmp.cuadro_operaciones;
-		TRUNCATE TABLE tmp.tipo_cambio
-		TRUNCATE TABLE tmp.cuadro_rectificaciones
+		TRUNCATE TABLE tmp.tipo_cambio;
+		TRUNCATE TABLE tmp.cuadro_rectificaciones;
 
 		-- LOG
 
-		TRUNCATE TABLE log.cartera_operaciones
-		TRUNCATE TABLE log.cuadro_operaciones
-		TRUNCATE TABLE log.tipo_cambio
-		TRUNCATE TABLE log.cuadro_rectificaciones
+		TRUNCATE TABLE log.cartera_operaciones;
+		TRUNCATE TABLE log.cuadro_operaciones;
+		TRUNCATE TABLE log.tipo_cambio;
+		TRUNCATE TABLE log.cuadro_rectificaciones;
 
 		-- INTERFACE
 
-		TRUNCATE TABLE interface.cartera_operaciones
-		TRUNCATE TABLE interface.cuadro_operaciones
-		TRUNCATE TABLE interface.tipo_cambio
-		TRUNCATE TABLE interface.cuadro_rectificaciones
+		TRUNCATE TABLE interface.cartera_operaciones;
+		TRUNCATE TABLE interface.cuadro_operaciones;
+		TRUNCATE TABLE interface.tipo_cambio;
+		TRUNCATE TABLE interface.cuadro_rectificaciones;
 
 		-- INTERNO
 
-		DELETE FROM interno.interfaz_rel
-		DELETE FROM interno.interfaz
-		DELETE FROM interno.operacion_titulo_rel
-		DELETE FROM interno.operacion_titulo
-		DELETE FROM interno.tabla_banco_126_rel
-		DELETE FROM interno.tabla_banco_126
-		DELETE FROM interno.tipo_deudor_rel
-		DELETE FROM interno.tipo_deudor
-		DELETE FROM interno.tipo_persona_rel
-		DELETE FROM interno.tipo_persona
+		DELETE FROM interno.interfaz_rel;
+		DELETE FROM interno.interfaz;
+		DELETE FROM interno.operacion_titulo_rel;
+		DELETE FROM interno.operacion_titulo;
+		DELETE FROM interno.tabla_banco_126_rel;
+		DELETE FROM interno.tabla_banco_126;
+		DELETE FROM interno.tipo_deudor_rel;
+		DELETE FROM interno.tipo_deudor;
+		DELETE FROM interno.tipo_persona_rel;
+		DELETE FROM interno.tipo_persona;
 		
 		
 	EXCEPTION WHEN OTHERS THEN
