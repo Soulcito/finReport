@@ -23,5 +23,10 @@
 \echo '=== Ejecutando scripts de LOGS ==='
 \ir /docker-entrypoint-initdb.d/logss/1-log_eventos.sql
 
+-- Ejecutar scripts de la carpeta procesos
+\echo '=== Ejecutando scripts de PROCESOS ==='
+\ir /docker-entrypoint-initdb.d/procesos/1-schema.sql
+\ir /docker-entrypoint-initdb.d/procesos/2-proceso.val_interfaz_A01.sql
+
 
 \echo '=== Inicialización completada ==='

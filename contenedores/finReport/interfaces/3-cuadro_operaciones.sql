@@ -48,18 +48,17 @@ $$;
 -- log
 
 CREATE TABLE log.cuadro_operaciones (
-	 fila                       integer not null 
-	,fecha_proceso              varchar(250) null
-	,cod_operacion              varchar(250) null
-	,fecha_cuota                varchar(250) null
-	,capital                    varchar(250) null 
-	,capital_pagado             varchar(250) null 
-	,interes_devengado          varchar(250) null
-	,interes_por_pagar          varchar(250) null
-	,interes_moroso             varchar(250) null
-	,interes_pagado             varchar(250) null
-	,otros                      varchar(250) null
-	,problema                   varchar(2000) null
+	 fecha_proceso              date not null
+	,cod_operacion              varchar(250) not null
+	,fecha_cuota                date not null
+	,capital                    numeric(22,4) not null 
+	,capital_pagado             numeric(22,4) not null  
+	,interes_devengado          numeric(22,4) not null 
+	,interes_por_pagar          numeric(22,4) not null 
+	,interes_moroso             numeric(22,4) not null 
+	,interes_pagado             numeric(22,4) not null 
+	,otros                      numeric(22,4) not null 
+	,problema 					TEXT null
 );
 
 

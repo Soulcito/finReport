@@ -41,11 +41,10 @@ $$;
 -- log
 
 CREATE TABLE log.tipo_cambio (
-	 fila                       integer not null 
-	,fecha_proceso              varchar(250) null
-	,cod_moneda                 varchar(250) null
-	,valor                      varchar(250) null
-	,problema                   varchar(2000) null
+	 fecha_proceso              date not null
+	,cod_moneda                 varchar(50) not null
+	,valor                      numeric(22,6) not null
+	,problema                   TEXT null
 );
 
 
