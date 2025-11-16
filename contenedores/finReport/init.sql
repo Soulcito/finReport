@@ -27,6 +27,7 @@
 \echo '=== Ejecutando scripts de PROCESOS ==='
 \ir /docker-entrypoint-initdb.d/procesos/1-schema.sql
 \ir /docker-entrypoint-initdb.d/procesos/2-proceso.val_interfaz_A01.sql
+\ir /docker-entrypoint-initdb.d/procesos/3-proceso.val_interfaz_B01.sql
 
 
 \echo '=== Inicialización completada ==='
