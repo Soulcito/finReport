@@ -87,7 +87,7 @@ CREATE TABLE log.cartera_operaciones (
 	,cod_moneda                 varchar(50) not null 
 	,fecha_aceleracion          date not null
 	,deuda_renegociada          varchar(2) not null
-	,operación_desfasada        varchar(2) not null
+	,operacion_desfasada        varchar(2) not null
 	,fecha_a_rectificar         date not null
 	,fecha_rectificacion        date not null
 	,causal_rectificacion       varchar(2) not null
@@ -135,7 +135,7 @@ CREATE TABLE interface.cartera_operaciones (
 	,cod_moneda                 varchar(50) not null 
 	,fecha_aceleracion          date not null
 	,deuda_renegociada          varchar(2) not null
-	,operación_desfasada        varchar(2) not null
+	,operacion_desfasada        varchar(2) not null
 	,fecha_a_rectificar         date not null
 	,fecha_rectificacion        date not null
 	,causal_rectificacion       varchar(2) not null
@@ -181,7 +181,7 @@ CREATE TABLE historico.cartera_operaciones (
 	,cod_moneda                 varchar(50) not null 
 	,fecha_aceleracion          date not null
 	,deuda_renegociada          varchar(2) not null
-	,operación_desfasada        varchar(2) not null
+	,operacion_desfasada        varchar(2) not null
 	,fecha_a_rectificar         date not null
 	,fecha_rectificacion        date not null
 	,causal_rectificacion       varchar(2) not null
@@ -227,7 +227,7 @@ CREATE TABLE respaldo.cartera_operaciones (
 	,cod_moneda                 varchar(50) not null 
 	,fecha_aceleracion          date not null
 	,deuda_renegociada          varchar(2) not null
-	,operación_desfasada        varchar(2) not null
+	,operacion_desfasada        varchar(2) not null
 	,fecha_a_rectificar         date not null
 	,fecha_rectificacion        date not null
 	,causal_rectificacion       varchar(2) not null

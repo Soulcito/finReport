@@ -30,5 +30,10 @@
 \ir /docker-entrypoint-initdb.d/procesos/3-proceso.val_interfaz_b01.sql
 \ir /docker-entrypoint-initdb.d/procesos/4-proceso.trunca_tablas.sql
 
+-- Ejecutar scripts de la carpeta reportes
+\echo '=== Ejecutando scripts de REPORTES ==='
+\ir /docker-entrypoint-initdb.d/reportes/1-schema.sql
+\ir /docker-entrypoint-initdb.d/reportes/2-rdc01.sql
+
 
 \echo '=== Inicialización completada ==='

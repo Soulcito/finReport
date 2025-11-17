@@ -21,7 +21,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, "operación_desfasada", fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.rut
@@ -44,7 +44,7 @@ BEGIN
 				,rec.cod_moneda
 				,rec.fecha_aceleracion
 				,rec.deuda_renegociada
-				,rec.operación_desfasada
+				,rec.operacion_desfasada
 				,rec.fecha_a_rectificar
 				,rec.fecha_rectificacion
 				,rec.causal_rectificacion
@@ -69,7 +69,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, "operación_desfasada", fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.rut
@@ -92,7 +92,7 @@ BEGIN
 				,rec.cod_moneda
 				,rec.fecha_aceleracion
 				,rec.deuda_renegociada
-				,rec.operación_desfasada
+				,rec.operacion_desfasada
 				,rec.fecha_a_rectificar
 				,rec.fecha_rectificacion
 				,rec.causal_rectificacion
@@ -117,7 +117,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, "operación_desfasada", fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.rut
@@ -140,7 +140,7 @@ BEGIN
 				,rec.cod_moneda
 				,rec.fecha_aceleracion
 				,rec.deuda_renegociada
-				,rec.operación_desfasada
+				,rec.operacion_desfasada
 				,rec.fecha_a_rectificar
 				,rec.fecha_rectificacion
 				,rec.causal_rectificacion
@@ -165,7 +165,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, "operación_desfasada", fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.rut
@@ -188,7 +188,7 @@ BEGIN
 				,rec.cod_moneda
 				,rec.fecha_aceleracion
 				,rec.deuda_renegociada
-				,rec.operación_desfasada
+				,rec.operacion_desfasada
 				,rec.fecha_a_rectificar
 				,rec.fecha_rectificacion
 				,rec.causal_rectificacion
@@ -213,7 +213,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, "operación_desfasada", fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_deudor, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, gar_real_inmobiliaria, gar_real_mobiliaria, gar_financiera, gar_personal, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.rut
@@ -236,7 +236,7 @@ BEGIN
 				,rec.cod_moneda
 				,rec.fecha_aceleracion
 				,rec.deuda_renegociada
-				,rec.operación_desfasada
+				,rec.operacion_desfasada
 				,rec.fecha_a_rectificar
 				,rec.fecha_rectificacion
 				,rec.causal_rectificacion
