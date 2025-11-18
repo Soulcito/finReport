@@ -17,7 +17,7 @@ BEGIN
 		    FROM interface.cuadro_operaciones a
 		    LEFT JOIN interface.cartera_operaciones b 
 		        ON a.cod_operacion = b.cod_operacion
-		    WHERE b.cod_entidad IS NULL
+		    WHERE b.cod_operacion IS NULL
 		
 		LOOP
 
@@ -46,7 +46,7 @@ BEGIN
 			CURRENT_TIMESTAMP,
 			'ERROR',
 			'',
-			'proceso.val_interfaz_B01',
+			'proceso.val_interfaz_b01',
 			SQLERRM
 		);
 	END;

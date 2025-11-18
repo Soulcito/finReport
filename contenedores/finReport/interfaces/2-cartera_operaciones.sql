@@ -39,7 +39,7 @@ CREATE TABLE tmp.cartera_operaciones (
 	,cod_moneda                 varchar(250) null 
 	,fecha_aceleracion          varchar(250) null
 	,deuda_renegociada          varchar(250) null
-	,operación_desfasada        varchar(250) null
+	,operacion_desfasada        varchar(250) null
 	,fecha_a_rectificar         varchar(250) null
 	,fecha_rectificacion        varchar(250) null
 	,causal_rectificacion       varchar(250) null

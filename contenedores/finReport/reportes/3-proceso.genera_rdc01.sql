@@ -19,7 +19,8 @@ BEGIN
 
 		-- | Logica de generacion de reporte desde la interfaz cartera_operaciones | --
 
-		SELECT 
+		insert into reporte.rdc01_detalle(fecha_proceso, rut, tipo_persona, codigo_operacion, operacion_titulo, tipo_deudor, tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, valor_gtia_inmobiliaria, valor_gtia_mobiliaria, valor_gtia_financiera, valor_gtia_personal, monto_original, monto_actual, monto_al_dia, monto_mora_1_tramo, monto_mora_2_tramo, monto_mora_3_tramo, monto_mora_4_tramo, monto_mora_5_tramo, monto_mora_6_tramo, monto_mora_7_tramo, monto_mora_8_tramo, monto_mora_9_tramo, mora_actual, deuda_renegociada, deuda_acelerada, tipo_persona_interfaz, operacion_titulo_interfaz, tipo_deudor_interfaz, tipo_obligacion_interfaz, fecha_primera_cuota_inpaga, cod_moneda, tipo_cambio)
+		select 
 			a.fecha_proceso, 
 			a.rut, 
 			b.cod_persona::INTEGER               										as "tipo_persona",
@@ -64,6 +65,56 @@ BEGIN
 											  inner join interno.tabla_banco_126_rel e  on a.cod_tipo_obligacion = e.cod_entidad
 											  inner join interface.tipo_cambio f        on a.cod_moneda = f.cod_moneda and a.fecha_proceso = f.fecha_proceso;
 		   
+
+
+		-- | Actualiza mora sin aceleracion | --
+
+		update reporte.rdc01_detalle as a 
+		    set 
+			  a.monto_mora_1_tramo = case when GBASE.tramo = 1 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_2_tramo = case when GBASE.tramo = 2 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_3_tramo = case when GBASE.tramo = 3 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_4_tramo = case when GBASE.tramo = 4 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_5_tramo = case when GBASE.tramo = 5 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_6_tramo = case when GBASE.tramo = 6 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_7_tramo = case when GBASE.tramo = 7 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_8_tramo = case when GBASE.tramo = 8 then GBASE.mora + GBASE.otros else 0 end
+		     ,a.monto_mora_9_tramo = case when GBASE.tramo = 1 then GBASE.mora + GBASE.otros else 0 end		   
+		from (
+			 select
+			    BASE.cod_operacion
+			   ,tramo
+			   ,sum(mora_moneda_origen) as "mora"
+			   ,sum(BASE.otros)              as "otros"
+			   from (
+						select 
+						    cod_operacion
+						   ,case
+						      when (fecha_proceso - fecha_cuota) + 1 < 30                                                  then 1
+							  when (fecha_proceso - fecha_cuota) + 1 >= 30  and (fecha_proceso - fecha_cuota) + 1 < 60      then 2
+							  when (fecha_proceso - fecha_cuota) + 1 >= 60  and (fecha_proceso - fecha_cuota) + 1 < 90      then 3
+							  when (fecha_proceso - fecha_cuota) + 1 >= 90  and (fecha_proceso - fecha_cuota) + 1 < 180     then 4
+							  when (fecha_proceso - fecha_cuota) + 1 >= 180 
+							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 1, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int) then 5
+							  when fecha_cuota <= make_date(extract(year from fecha_proceso)::int - 1, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)
+							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 2, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)  then 6
+							  when fecha_cuota <= make_date(extract(year from fecha_proceso)::int - 2, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)
+							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 3, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)  then 7
+							  when fecha_cuota <= make_Date(extract(year from fecha_proceso)::int - 3, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)
+							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 4, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)  then 8
+							  when fecha_cuota <= make_date(extract(year from fecha_proceso)::int - 4, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)     then 9  
+							else 1 end  as "tramo"
+						   ,(capital - capital_pagado + interes_devengado + interes_moroso - interes_pagado) as "mora_moneda_origen"
+						   ,otros                                 
+						    from interface.cuadro_operaciones  
+							     where fecha_cuota <= fecha_proceso
+					) as BASE   inner join interface.cartera_operaciones b on BASE.cod_operacion = b.cod_operacion
+					            inner join interface.tipo_cambio c         on b.cod_moneda = c.cod_moneda
+					  where to_char(b.fecha_aceleracion,'YYYYMMDD')::VARCHAR = '19000101'
+					group by BASE.cod_operacion, tramo
+				) AS GBASE 
+				where a.cod_operacion = GBASE.cod_operacion;
+
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;

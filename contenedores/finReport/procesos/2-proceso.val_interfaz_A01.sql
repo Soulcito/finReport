@@ -254,7 +254,7 @@ BEGIN
 			CURRENT_TIMESTAMP,
 			'ERROR',
 			'',
-			'proceso.val_interfaz_A01',
+			'proceso.val_interfaz_a01',
 			SQLERRM
 		);
 	END;
