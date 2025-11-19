@@ -34,6 +34,7 @@
 \echo '=== Ejecutando scripts de REPORTES ==='
 \ir /docker-entrypoint-initdb.d/reportes/1-schema.sql
 \ir /docker-entrypoint-initdb.d/reportes/2-rdc01.sql
+\ir /docker-entrypoint-initdb.d/reportes/3-proceso.genera_rdc01.sql
 
 
 \echo '=== Inicialización completada ==='

@@ -28,6 +28,7 @@ CREATE TABLE tmp.cuadro_operaciones (
 	,interes_moroso             varchar(250) null
 	,interes_pagado             varchar(250) null
 	,otros                      varchar(250) null 
+	,otros_pagado               varchar(250) null 
 );
 
 
@@ -58,6 +59,7 @@ CREATE TABLE log.cuadro_operaciones (
 	,interes_moroso             numeric(22,4) not null 
 	,interes_pagado             numeric(22,4) not null 
 	,otros                      numeric(22,4) not null 
+	,otros_pagado               numeric(22,4) not null 
 	,problema 					TEXT null
 );
 
@@ -89,6 +91,7 @@ CREATE TABLE interface.cuadro_operaciones (
 	,interes_moroso             numeric(22,4) not null 
 	,interes_pagado             numeric(22,4) not null 
 	,otros                      numeric(22,4) not null 
+	,otros_pagado               numeric(22,4) not null 
 );
 
 DO
@@ -118,6 +121,7 @@ CREATE TABLE historico.cuadro_operaciones (
 	,interes_moroso             numeric(22,4) not null 
 	,interes_pagado             numeric(22,4) not null 
 	,otros                      numeric(22,4) not null
+	,otros_pagado               numeric(22,4) not null
 );
 
 DO
@@ -147,4 +151,5 @@ CREATE TABLE respaldo.cuadro_operaciones (
 	,interes_moroso             numeric(22,4) not null 
 	,interes_pagado             numeric(22,4) not null 
 	,otros                      numeric(22,4) not null
+	,otros_pagado               numeric(22,4) not null
 );
