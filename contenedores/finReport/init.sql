@@ -9,6 +9,7 @@
 \ir /docker-entrypoint-initdb.d/interfaces/3-cuadro_operaciones.sql
 \ir /docker-entrypoint-initdb.d/interfaces/4-tipo_cambio.sql
 \ir /docker-entrypoint-initdb.d/interfaces/5-cuadro_rectificaciones.sql
+\ir /docker-entrypoint-initdb.d/interfaces/6-cartera_garantias.sql
 
 -- Ejecutar scripts de la carpeta tablas_internas
 \echo '=== Ejecutando scripts de TABLAS INTERNAS ==='

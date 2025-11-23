@@ -23,15 +23,15 @@ CREATE TABLE tmp.cartera_operaciones (
 	,cod_persona                varchar(250) null
 	,cod_operacion              varchar(250) null
 	,cod_titulo_3               varchar(250) null
-	,cod_deudor                 varchar(250) null
+	--,cod_deudor                 varchar(250) null
 	,cod_tipo_obligacion        varchar(250) null
 	,fecha_otorgamiento         varchar(250) null
 	,carga_financiera           varchar(250) null
 	,fecha_extincion            varchar(250) null
-	,gar_real_inmobiliaria      varchar(250) null
-	,gar_real_mobiliaria        varchar(250) null
-	,gar_financiera             varchar(250) null
-	,gar_personal               varchar(250) null
+	--,gar_real_inmobiliaria      varchar(250) null
+	--,gar_real_mobiliaria        varchar(250) null
+	--,gar_financiera             varchar(250) null
+	--,gar_personal               varchar(250) null
 	,monto_original             varchar(250) null
 	,capital                    varchar(250) null
 	,interes                    varchar(250) null
@@ -71,15 +71,15 @@ CREATE TABLE log.cartera_operaciones (
 	,cod_persona                varchar(50) not null
 	,cod_operacion              varchar(50) not null
 	,cod_titulo_3               varchar(50) not null
-	,cod_deudor                 varchar(50) not null
+	--,cod_deudor                 varchar(50) not null
 	,cod_tipo_obligacion        varchar(50) not null
 	,fecha_otorgamiento         date not null
 	,carga_financiera           numeric(22,4) not null
 	,fecha_extincion            date not null
-	,gar_real_inmobiliaria      numeric(22,4) not null
-	,gar_real_mobiliaria        numeric(22,4) not null
-	,gar_financiera             numeric(22,4) not null
-	,gar_personal               numeric(22,4) not null
+	--,gar_real_inmobiliaria      numeric(22,4) not null
+	--,gar_real_mobiliaria        numeric(22,4) not null
+	--,gar_financiera             numeric(22,4) not null
+	--,gar_personal               numeric(22,4) not null
 	,monto_original             numeric(22,4) not null
 	,capital                    numeric(22,4) not null
 	,interes                    numeric(22,4) not null
@@ -119,15 +119,15 @@ CREATE TABLE interface.cartera_operaciones (
 	,cod_persona                varchar(50) not null
 	,cod_operacion              varchar(50) not null
 	,cod_titulo_3               varchar(50) not null
-	,cod_deudor                 varchar(50) not null
+	--,cod_deudor                 varchar(50) not null
 	,cod_tipo_obligacion        varchar(50) not null
 	,fecha_otorgamiento         date not null
 	,carga_financiera           numeric(22,4) not null
 	,fecha_extincion            date not null
-	,gar_real_inmobiliaria      numeric(22,4) not null
-	,gar_real_mobiliaria        numeric(22,4) not null
-	,gar_financiera             numeric(22,4) not null
-	,gar_personal               numeric(22,4) not null
+	--,gar_real_inmobiliaria      numeric(22,4) not null
+	--,gar_real_mobiliaria        numeric(22,4) not null
+	--,gar_financiera             numeric(22,4) not null
+	--,gar_personal               numeric(22,4) not null
 	,monto_original             numeric(22,4) not null
 	,capital                    numeric(22,4) not null
 	,interes                    numeric(22,4) not null
@@ -165,15 +165,15 @@ CREATE TABLE historico.cartera_operaciones (
 	,cod_persona                varchar(50) not null
 	,cod_operacion              varchar(50) not null
 	,cod_titulo_3               varchar(50) not null
-	,cod_deudor                 varchar(50) not null
+	--,cod_deudor                 varchar(50) not null
 	,cod_tipo_obligacion        varchar(50) not null
 	,fecha_otorgamiento         date not null
 	,carga_financiera           numeric(22,4) not null
 	,fecha_extincion            date not null
-	,gar_real_inmobiliaria      numeric(22,4) not null
-	,gar_real_mobiliaria        numeric(22,4) not null
-	,gar_financiera             numeric(22,4) not null
-	,gar_personal               numeric(22,4) not null
+	--,gar_real_inmobiliaria      numeric(22,4) not null
+	--,gar_real_mobiliaria        numeric(22,4) not null
+	--,gar_financiera             numeric(22,4) not null
+	--,gar_personal               numeric(22,4) not null
 	,monto_original             numeric(22,4) not null
 	,capital                    numeric(22,4) not null
 	,interes                    numeric(22,4) not null
@@ -211,15 +211,15 @@ CREATE TABLE respaldo.cartera_operaciones (
 	,cod_persona                varchar(50) not null
 	,cod_operacion              varchar(50) not null
 	,cod_titulo_3               varchar(50) not null
-	,cod_deudor                 varchar(50) not null
+	--,cod_deudor                 varchar(50) not null
 	,cod_tipo_obligacion        varchar(50) not null
 	,fecha_otorgamiento         date not null
 	,carga_financiera           numeric(22,4) not null
 	,fecha_extincion            date not null
-	,gar_real_inmobiliaria      numeric(22,4) not null
-	,gar_real_mobiliaria        numeric(22,4) not null
-	,gar_financiera             numeric(22,4) not null
-	,gar_personal               numeric(22,4) not null
+	--,gar_real_inmobiliaria      numeric(22,4) not null
+	--,gar_real_mobiliaria        numeric(22,4) not null
+	--,gar_financiera             numeric(22,4) not null
+	--,gar_personal               numeric(22,4) not null
 	,monto_original             numeric(22,4) not null
 	,capital                    numeric(22,4) not null
 	,interes                    numeric(22,4) not null
