@@ -114,7 +114,7 @@ def load_interfaz(**context):
         try:
             # Leer archivo
             try:
-                df_txt = pd.read_csv(file_path, sep=";", encoding="utf-8", dtype=str)
+                df_txt = pd.read_csv(file_path, sep=";", encoding="utf-8", dtype=str, header=None)
                 logger.info(f"Archivo leído correctamente: {len(df_txt)} filas")
             except Exception as e:
                 logger.error(f"Error leyendo archivo {file}: {e}")

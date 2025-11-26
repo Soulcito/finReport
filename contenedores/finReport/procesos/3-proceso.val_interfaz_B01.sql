@@ -21,7 +21,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cuadro_operaciones_operaciones (fecha_proceso, cod_operacion, fecha_cuota, capital, capital_pagado, interes_devengado, interes_por_pagar, interes_moroso, interes_pagado, otros)
+			INSERT INTO log.cuadro_operaciones (fecha_proceso, cod_operacion, fecha_cuota, capital, capital_pagado, interes_devengado, interes_por_pagar, interes_moroso, interes_pagado, otros, otros_pagado, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.cod_operacion
@@ -33,6 +33,7 @@ BEGIN
 				,rec.interes_moroso
 				,rec.interes_pagado
 				,rec.otros
+				,rec.otros_pagado
 				,'B01-00001; cod_operacion: No se encuentra operacion en interfaz cartera_operaciones'
 			);
 

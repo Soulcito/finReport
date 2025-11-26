@@ -14,13 +14,16 @@ BEGIN
 		TRUNCATE TABLE tmp.cuadro_operaciones;
 		TRUNCATE TABLE tmp.tipo_cambio;
 		TRUNCATE TABLE tmp.cuadro_rectificaciones;
+		TRUNCATE TABLE tmp.cartera_garantias;
 
 		-- LOG
 
+        TRUNCATE TABLE log.log_eventos;
 		TRUNCATE TABLE log.cartera_operaciones;
 		TRUNCATE TABLE log.cuadro_operaciones;
 		TRUNCATE TABLE log.tipo_cambio;
 		TRUNCATE TABLE log.cuadro_rectificaciones;
+		TRUNCATE TABLE log.cartera_garantias;
 
 		-- INTERFACE
 
@@ -28,6 +31,7 @@ BEGIN
 		TRUNCATE TABLE interface.cuadro_operaciones;
 		TRUNCATE TABLE interface.tipo_cambio;
 		TRUNCATE TABLE interface.cuadro_rectificaciones;
+		TRUNCATE TABLE interface.cartera_garantias;
 
 		-- INTERNO
 

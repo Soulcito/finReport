@@ -68,7 +68,6 @@ CREATE TABLE reporte.rdc01_detalle (
 	,deuda_acelerada			int not null
 	,tipo_persona_interfaz		varchar(50) not null
 	,operacion_titulo_interfaz	varchar(50) not null
-	,tipo_deudor_interfaz		varchar(50) not null
 	,tipo_obligacion_interfaz	varchar(50) not null
 	,fecha_primera_cuota_inpaga varchar(8)  not null
 	,cod_moneda                 varchar(50) not null
