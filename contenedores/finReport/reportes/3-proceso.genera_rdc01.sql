@@ -43,7 +43,7 @@ BEGIN
 			0											            					as "valor_gtia_personal", 
 			case
 				when e.cod_obligacion::INTEGER in (41,42,43,44) then 0			
-				when e.cod_obligacion::INTEGER in (31,32,33)    then 0                 -- SE ACTUALIZA CON LO QUE QUEDA POR PAGAR DESDE EL CUADRO DE PAGO
+				when e.cod_obligacion::INTEGER in (31,32,33)    then 0                 -- PARA LEASING, SE ACTUALIZA CON LO QUE QUEDA POR PAGAR DESDE EL CUADRO DE PAGO
 				else (a.monto_original * f.valor)::NUMERIC(15) end    					as "monto_original",     
 			0                                                                           as "monto_actual",       -- Se entiende por monto al dia + moras
 			0                                                           				as "monto_al_dia",
@@ -303,6 +303,125 @@ BEGIN
 			  group by cod_operacion
 		   ) AS BASE where a.codigo_operacion = BASE.cod_operacion;
 
+        -- | Actualiza garantias en deudores directos | --
+
+           update reporte.rdc01_detalle as a
+		   set 
+		       valor_gtia_inmobiliaria = GBASE.gar_real_inmobiliaria
+			  ,valor_gtia_mobiliaria   = GBASE.gar_real_mobiliaria
+			  ,valor_gtia_financiera   = GBASE.gar_financiera
+			  ,valor_gtia_personal     = GBASE.gar_personal
+           from (
+			    select 
+				   cod_operacion,
+				   sum(gar_real_inmobiliaria)                as "gar_real_inmobiliaria",
+				   sum(gar_real_mobiliaria)                  as "gar_real_mobiliaria",
+				   sum(gar_financiera)                       as "gar_financiera",
+				   sum(gar_personal)                         as "gar_personal"
+				   from (
+					select 
+					  a.cod_operacion,
+					  a.rut_garante,
+					  c.cod_persona,
+					  ((a.gar_real_inmobiliaria * a.porc_real_inmobiliaria)/100)::numeric(15)    as "gar_real_inmobiliaria",
+					  ((a.gar_real_mobiliaria * a.porc_real_mobiliaria)/100)::numeric(15)        as "gar_real_mobiliaria",
+					  ((a.gar_financiera * a.porc_financiera)/100)::numeric(15)                  as "gar_financiera",
+					  ((a.gar_personal * a.porc_personal)/100)::numeric(15)                      as "gar_personal"
+					   from interface.cartera_garantias a inner join interno.tipo_persona_rel c on a.cod_persona = c.cod_entidad
+				   ) as BASE
+				   group by cod_operacion
+			) as GBASE
+			WHERE a.codigo_operacion = GBASE.cod_operacion
+			and a.tipo_deudor = 1;
+
+        
+		-- | Actualiza garantias personales cuando sean mayores a la deuda, se dejan igual a la deuda | --			
+
+			update reporte.rdc01_detalle set valor_gtia_personal = monto_actual
+			where valor_gtia_personal > monto_actual
+			and tipo_deudor = 1;
+
+
+		-- | Se inserta deudores indirectos | --						
+
+           insert into reporte.rdc01_detalle(fecha_proceso, rut, tipo_persona, codigo_operacion, operacion_titulo, tipo_deudor, tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, valor_gtia_inmobiliaria, valor_gtia_mobiliaria, valor_gtia_financiera, valor_gtia_personal, monto_original, monto_actual, monto_al_dia, monto_mora_1_tramo, monto_mora_2_tramo, monto_mora_3_tramo, monto_mora_4_tramo, monto_mora_5_tramo, monto_mora_6_tramo, monto_mora_7_tramo, monto_mora_8_tramo, monto_mora_9_tramo, mora_actual, deuda_renegociada, deuda_acelerada, tipo_persona_interfaz, operacion_titulo_interfaz, tipo_obligacion_interfaz, fecha_primera_cuota_inpaga, cod_moneda, tipo_cambio)
+		   select
+                a.fecha_proceso
+			   ,GBASE.rut_garante              as "rut"
+			   ,GBASE.cod_persona::integer     as "tipo_persona"
+			   ,a.codigo_operacion
+			   ,a.operacion_titulo
+			   ,2                              as "tipo_deudor"
+			   ,a.tipo_obligacion
+			   ,a.fecha_otorgamiento
+			   ,0                              as "carga_financiera"
+			   ,a.fecha_extincion
+			   ,0                              as "valor_gtia_inmobiliaria"
+			   ,0                              as "valor_gtia_mobiliaria"
+			   ,0                              as "valor_gtia_financiera"
+			   ,a.valor_gtia_personal          as "valor_gtia_personal"            -- SE COLOCA SOLO PARA VALIDAR QUE LA DEUDA NO SEA MAYOR A LA GARANTIA
+			   ,a.monto_original
+			   ,a.monto_actual
+			   ,a.monto_al_dia
+			   ,a.monto_mora_1_tramo
+			   ,a.monto_mora_2_tramo
+			   ,a.monto_mora_3_tramo
+			   ,a.monto_mora_4_tramo
+			   ,a.monto_mora_5_tramo
+			   ,a.monto_mora_6_tramo
+			   ,a.monto_mora_7_tramo
+			   ,a.monto_mora_8_tramo
+			   ,a.monto_mora_9_tramo
+			   ,a.mora_actual
+			   ,a.deuda_renegociada
+			   ,a.deuda_acelerada
+			   ,a.tipo_persona_interfaz
+			   ,a.operacion_titulo_interfaz
+			   ,a.tipo_obligacion_interfaz
+			   ,a.fecha_primera_cuota_inpaga
+			   ,a.cod_moneda
+			   ,a.tipo_cambio
+		    from reporte.rdc01_detalle a inner join 
+               (
+				    select 
+					   cod_operacion,
+					   rut_garante,
+					   cod_persona,
+					   sum(gar_personal)                         as "gar_personal"
+					   from (
+						select 
+						  a.cod_operacion,
+						  a.rut_garante,
+						  c.cod_persona,
+						  ((a.gar_personal * a.porc_personal)/100)::numeric(15)                      as "gar_personal"
+						   from interface.cartera_garantias a inner join interno.tipo_persona_rel c on a.cod_persona = c.cod_entidad
+						   where a.gar_personal > 0
+					   ) as BASE
+					   group by cod_operacion, rut_garante, cod_persona
+			   ) as GBASE on a.codigo_operacion = GBASE.cod_operacion;
+
+
+
+		-- | AJUSTA DEUDA DEL RUT INDIRECTO CUANDO ESTA SEA MAYOR A LA GARANTIA | --						
+
+		update reporte.rdc01_detalle 
+		       set 
+			       monto_actual = valor_gtia_personal
+			      ,monto_al_dia = 
+							             case 
+										    when (monto_actual - valor_gtia_personal) <= monto_al_dia then monto_al_dia - (monto_actual - valor_gtia_personal)  
+											else monto_al_dia end
+				  ,monto_mora_1_tramo = 
+							             case 
+										    when (monto_actual - valor_gtia_personal) <= monto_al_dia then monto_mora_1_tramo
+											else 0 end -- HAY QUE REVISAR LOGICA PARA IR ACTUALIZANDO DESDE LO MAS ACTUAL A LO MAS MOROSO HASTA CUBRIR LA GARANTIA
+			      
+		where valor_gtia_personal < monto_actual;
+
+		-- | MUEVE CERO AL CAMPO DE GARANTIA PERSONAL EN DEUDORES INDIRECTOS | --						
+
+		update reporte.rdc01_detalle set valor_gtia_personal = 0
+		where tipo_deudor = 2;
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;
