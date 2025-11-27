@@ -359,7 +359,7 @@ BEGIN
 			   ,0                              as "valor_gtia_inmobiliaria"
 			   ,0                              as "valor_gtia_mobiliaria"
 			   ,0                              as "valor_gtia_financiera"
-			   ,a.valor_gtia_personal          as "valor_gtia_personal"            -- SE COLOCA SOLO PARA VALIDAR QUE LA DEUDA NO SEA MAYOR A LA GARANTIA
+			   ,a.valor_gtia_personal          as "valor_gtia_personal"            -- SE COLOCA SOLO PARA VALIDAR QUE LA DEUDA NO SEA MAYOR A LA GARANTIA PARA DEUDORES INDIRECTOS
 			   ,a.monto_original
 			   ,a.monto_actual
 			   ,a.monto_al_dia
@@ -407,14 +407,94 @@ BEGIN
 		update reporte.rdc01_detalle 
 		       set 
 			       monto_actual = valor_gtia_personal
-			      ,monto_al_dia = 
+			      ,monto_al_dia =  case
+				                      when monto_al_dia = 0 then 0
+									  else 
 							             case 
 										    when (monto_actual - valor_gtia_personal) <= monto_al_dia then monto_al_dia - (monto_actual - valor_gtia_personal)  
-											else monto_al_dia end
+											else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA
+									  end
 				  ,monto_mora_1_tramo = 
-							             case 
-										    when (monto_actual - valor_gtia_personal) <= monto_al_dia then monto_mora_1_tramo
-											else 0 end -- HAY QUE REVISAR LOGICA PARA IR ACTUALIZANDO DESDE LO MAS ACTUAL A LO MAS MOROSO HASTA CUBRIR LA GARANTIA
+							       case
+								      when monto_mora_1_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia) < 0 then monto_mora_1_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia) <= monto_mora_1_tramo then monto_mora_1_tramo - (monto_actual - valor_gtia_personal - monto_al_dia)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1													
+									  end
+				  ,monto_mora_2_tramo = 
+				  				   case
+									  when monto_mora_2_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo) < 0 then monto_mora_2_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo) <= monto_mora_2_tramo then monto_mora_2_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2											
+									  end
+				  ,monto_mora_3_tramo = 
+				  				   case
+									  when monto_mora_3_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo) < 0 then monto_mora_3_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo) <= monto_mora_3_tramo then monto_mora_3_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3										
+									  end
+				  ,monto_mora_4_tramo = 
+				  				   case
+									  when monto_mora_4_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo) < 0 then monto_mora_4_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo) <= monto_mora_4_tramo then monto_mora_4_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4									
+									  end
+				  ,monto_mora_5_tramo = 
+				  				   case
+									  when monto_mora_5_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo) < 0 then monto_mora_5_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo) <= monto_mora_5_tramo then monto_mora_5_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5								
+									  end
+				  ,monto_mora_6_tramo = 
+				  				   case
+									  when monto_mora_6_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo) < 0 then monto_mora_6_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo) <= monto_mora_6_tramo then monto_mora_6_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5 + MORA_TRAMO_6								
+									  end
+				  ,monto_mora_7_tramo = 
+				  				   case
+									  when monto_mora_7_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo) < 0 then monto_mora_7_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo) <= monto_mora_7_tramo then monto_mora_7_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5 + MORA_TRAMO_6 + MORA_TRAMO_7									
+									  end
+				  ,monto_mora_8_tramo = 
+				  				   case
+									  when monto_mora_8_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo) < 0 then monto_mora_8_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo) <= monto_mora_8_tramo then monto_mora_8_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5 + MORA_TRAMO_6 + MORA_TRAMO_7 + MORA_TRAMO_8									
+									  end
+				  ,monto_mora_9_tramo = 
+				  				   case
+									  when monto_mora_9_tramo = 0 then 0
+									  when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo - monto_mora_8_tramo) < 0 then monto_mora_9_tramo
+									  else
+								        case 
+										    when (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo - monto_mora_8_tramo) <= monto_mora_9_tramo then monto_mora_9_tramo - (monto_actual - valor_gtia_personal - monto_al_dia - monto_mora_1_tramo - monto_mora_2_tramo - monto_mora_3_tramo - monto_mora_4_tramo - monto_mora_5_tramo - monto_mora_6_tramo - monto_mora_7_tramo - monto_mora_8_tramo)
+   								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5 + MORA_TRAMO_6 + MORA_TRAMO_7 + MORA_TRAMO_8 + MORA_TRAMO_9								
+									  end									  
 			      
 		where valor_gtia_personal < monto_actual;
 
