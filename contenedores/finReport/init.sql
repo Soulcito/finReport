@@ -19,6 +19,7 @@
 \ir /docker-entrypoint-initdb.d/tablas_internas/4-tipo_deudor.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/5-tabla_banco_126.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/6-interfaz_manager.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/7-parametros_generales.sql
 
 -- Ejecutar scripts de la carpeta logs
 \echo '=== Ejecutando scripts de LOGS ==='

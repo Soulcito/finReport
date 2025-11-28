@@ -3,6 +3,8 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	rec RECORD;
+	fecha_archivo varchar(8);
+	codigo_institucion varchar(10);
 	
 BEGIN
 	BEGIN
@@ -12,12 +14,30 @@ BEGIN
 		*/
 
 
+		-- | Determina fecha de proceso | --		
+
+		select TO_CHAR(max(fecha_proceso), 'YYYYMMDD')::VARCHAR
+		into fecha_archivo
+		from interface.cartera_operaciones;
+
+		RAISE NOTICE 'Fecha de proceso para RDC01: %', fecha_archivo;
+
 
 		-- | Borrado de tablas | --
 		
 		truncate table reporte.rdc01_texto;
 		truncate table reporte.rdc01_detalle;
-		truncate table reporte.rdc01_final;
+		truncate table reporte.rdc01_final;		
+
+		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
+
+		-- | Determina codigo de la institucion | --		
+
+		select LPAD(valor,10,'0')
+		into codigo_institucion
+		from interno.parametros_generales where cod = '1';		
+
+		RAISE NOTICE 'Codigo de institucion para RDC01: %', codigo_institucion;
 
 		-- | Logica de generacion de reporte desde la interfaz cartera_operaciones | --
 
@@ -142,12 +162,12 @@ BEGIN
 						select 
 						    cod_operacion
 						   ,case
-						      when (fecha_proceso - fecha_cuota) + 1 < 30                                                  then 1
+						      when (fecha_proceso - fecha_cuota) + 1 <  30                                                  then 1
 							  when (fecha_proceso - fecha_cuota) + 1 >= 30  and (fecha_proceso - fecha_cuota) + 1 < 60      then 2
 							  when (fecha_proceso - fecha_cuota) + 1 >= 60  and (fecha_proceso - fecha_cuota) + 1 < 90      then 3
 							  when (fecha_proceso - fecha_cuota) + 1 >= 90  and (fecha_proceso - fecha_cuota) + 1 < 180     then 4
 							  when (fecha_proceso - fecha_cuota) + 1 >= 180 
-							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 1, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int) then 5
+							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 1, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)  then 5
 							  when fecha_cuota <= make_date(extract(year from fecha_proceso)::int - 1, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)
 							       and fecha_cuota > make_date(extract(year from fecha_proceso)::int - 2, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)  then 6
 							  when fecha_cuota <= make_date(extract(year from fecha_proceso)::int - 2, extract(month from fecha_proceso)::int, extract(day from fecha_proceso)::int)
@@ -195,12 +215,12 @@ BEGIN
 							  -- Mantiene la mora antigua con la fecha de proceso
 							  when fecha_cuota < fecha_aceleracion then
 		 						   case
-								      when (a.fecha_proceso - fecha_cuota) + 1 < 30                                                  then 1
+								      when (a.fecha_proceso - fecha_cuota) + 1 <  30                                                    then 1
 									  when (a.fecha_proceso - fecha_cuota) + 1 >= 30  and (a.fecha_proceso - fecha_cuota) + 1 < 60      then 2
 									  when (a.fecha_proceso - fecha_cuota) + 1 >= 60  and (a.fecha_proceso - fecha_cuota) + 1 < 90      then 3
 									  when (a.fecha_proceso - fecha_cuota) + 1 >= 90  and (a.fecha_proceso - fecha_cuota) + 1 < 180     then 4
 									  when (a.fecha_proceso - fecha_cuota) + 1 >= 180 
-									       and fecha_cuota > make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int) then 5
+									       and fecha_cuota > make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)  then 5
 									  when fecha_cuota <= make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)
 									       and fecha_cuota > make_date(extract(year from a.fecha_proceso)::int - 2, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)  then 6
 									  when fecha_cuota <= make_date(extract(year from a.fecha_proceso)::int - 2, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)
@@ -212,12 +232,12 @@ BEGIN
                               else
 							  -- Nueva mora acelerada para las cuotas futuras
 		 						   case
-								      when (a.fecha_proceso - fecha_aceleracion) + 1 < 30                                                  then 1
+								      when (a.fecha_proceso - fecha_aceleracion) + 1 <  30                                                          then 1
 									  when (a.fecha_proceso - fecha_aceleracion) + 1 >= 30  and (a.fecha_proceso - fecha_aceleracion) + 1 < 60      then 2
 									  when (a.fecha_proceso - fecha_aceleracion) + 1 >= 60  and (a.fecha_proceso - fecha_aceleracion) + 1 < 90      then 3
 									  when (a.fecha_proceso - fecha_aceleracion) + 1 >= 90  and (a.fecha_proceso - fecha_aceleracion) + 1 < 180     then 4
 									  when (a.fecha_proceso - fecha_aceleracion) + 1 >= 180 
-									       and fecha_aceleracion > make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int) then 5
+									       and fecha_aceleracion > make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)  then 5
 									  when fecha_aceleracion <= make_date(extract(year from a.fecha_proceso)::int - 1, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)
 									       and fecha_aceleracion > make_date(extract(year from a.fecha_proceso)::int - 2, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)  then 6
 									  when fecha_aceleracion <= make_date(extract(year from a.fecha_proceso)::int - 2, extract(month from a.fecha_proceso)::int, extract(day from a.fecha_proceso)::int)
@@ -299,7 +319,8 @@ BEGIN
 			  	 cod_operacion
 				,min(fecha_cuota)   as "fecha"
 			  from interface.cuadro_operaciones
-			  		where capital <> capital_pagado or interes_por_pagar <> interes_pagado or otros <> otros_pagado
+			  		where (capital <> capital_pagado or interes_por_pagar <> interes_pagado or otros <> otros_pagado)
+					  and fecha_cuota <= fecha_proceso
 			  group by cod_operacion
 		   ) AS BASE where a.codigo_operacion = BASE.cod_operacion;
 
@@ -496,12 +517,128 @@ BEGIN
    								            else 0 end          -- CUANDO LA DIFERENCIA ES MAYOR QUE EL MONTO AL DIA + MORA_TRAMO_1 + MORA_TRAMO_2 + MORA_TRAMO_3 + MORA_TRAMO_4 + MORA_TRAMO_5 + MORA_TRAMO_6 + MORA_TRAMO_7 + MORA_TRAMO_8 + MORA_TRAMO_9								
 									  end									  
 			      
-		where valor_gtia_personal < monto_actual;
+		where valor_gtia_personal < monto_actual
+		  and tipo_deudor = 2;
 
 		-- | MUEVE CERO AL CAMPO DE GARANTIA PERSONAL EN DEUDORES INDIRECTOS | --						
 
 		update reporte.rdc01_detalle set valor_gtia_personal = 0
 		where tipo_deudor = 2;
+
+
+
+
+		-- | GENERA RDC01_FINAL | --						
+
+
+		insert into reporte.rdc01_final(rut, tipo_persona, codigo_operacion, operacion_titulo, tipo_deudor, tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, valor_gtia_inmobiliaria, valor_gtia_mobiliaria, valor_gtia_financiera, valor_gtia_personal, monto_original, monto_actual, monto_al_dia, monto_mora_1_tramo, monto_mora_2_tramo, monto_mora_3_tramo, monto_mora_4_tramo, monto_mora_5_tramo, monto_mora_6_tramo, monto_mora_7_tramo, monto_mora_8_tramo, monto_mora_9_tramo, mora_actual, deuda_renegociada, deuda_acelerada)
+		select 
+			rut, 
+			tipo_persona,
+		    codigo_operacion, 
+		    operacion_titulo,
+			tipo_deudor,
+			tipo_obligacion,
+			fecha_otorgamiento, 
+	   		carga_financiera,
+			fecha_extincion,
+			valor_gtia_inmobiliaria, 
+			valor_gtia_mobiliaria, 
+			valor_gtia_financiera, 
+			valor_gtia_personal, 
+			monto_original,     
+			monto_actual,
+			monto_al_dia,
+			monto_mora_1_tramo,
+			monto_mora_2_tramo,
+			monto_mora_3_tramo,
+			monto_mora_4_tramo,
+			monto_mora_5_tramo,
+			monto_mora_6_tramo,
+			monto_mora_7_tramo,
+			monto_mora_8_tramo,
+			monto_mora_9_tramo,
+			mora_actual,
+			deuda_renegociada, 
+			deuda_acelerada
+		FROM reporte.rdc01_detalle;
+
+
+		-- | GENERA RDC01_FINAL | --						
+
+
+		insert into reporte.rdc01_hist(fecha_proceso, rut, tipo_persona, codigo_operacion, operacion_titulo, tipo_deudor, tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, valor_gtia_inmobiliaria, valor_gtia_mobiliaria, valor_gtia_financiera, valor_gtia_personal, monto_original, monto_actual, monto_al_dia, monto_mora_1_tramo, monto_mora_2_tramo, monto_mora_3_tramo, monto_mora_4_tramo, monto_mora_5_tramo, monto_mora_6_tramo, monto_mora_7_tramo, monto_mora_8_tramo, monto_mora_9_tramo, mora_actual, deuda_renegociada, deuda_acelerada)
+		select 
+		    fecha_archivo    as "fecha_proceso",
+			rut, 
+			tipo_persona,
+		    codigo_operacion, 
+		    operacion_titulo,
+			tipo_deudor,
+			tipo_obligacion,
+			fecha_otorgamiento, 
+	   		carga_financiera,
+			fecha_extincion,
+			valor_gtia_inmobiliaria, 
+			valor_gtia_mobiliaria, 
+			valor_gtia_financiera, 
+			valor_gtia_personal, 
+			monto_original,     
+			monto_actual,
+			monto_al_dia,
+			monto_mora_1_tramo,
+			monto_mora_2_tramo,
+			monto_mora_3_tramo,
+			monto_mora_4_tramo,
+			monto_mora_5_tramo,
+			monto_mora_6_tramo,
+			monto_mora_7_tramo,
+			monto_mora_8_tramo,
+			monto_mora_9_tramo,
+			mora_actual,
+			deuda_renegociada, 
+			deuda_acelerada
+		FROM reporte.rdc01_final;		
+
+
+		-- | GENERA RDC01_TEXTO | --								
+		
+
+		insert into reporte.rdc01_texto(registro)  
+		select RPAD(codigo_institucion || 'RDC01' || fecha_archivo,322,' ')  as "registro"
+		union all
+		select 
+			LPAD(rut,10,'0') ||  
+			tipo_persona::varchar ||
+		    RPAD(codigo_operacion,30,' ') || 
+		    operacion_titulo::varchar ||
+			tipo_deudor::varchar ||
+			LPAD(tipo_obligacion::varchar,2,'0') ||
+			fecha_otorgamiento || 
+	   		LPAD(carga_financiera::varchar,15,'0') ||
+			fecha_extincion ||
+			LPAD(valor_gtia_inmobiliaria::varchar,15,'0') || 
+			LPAD(valor_gtia_mobiliaria::varchar,15,'0') || 
+			LPAD(valor_gtia_financiera::varchar,15,'0') ||
+			LPAD(valor_gtia_personal::varchar,15,'0') || 
+			LPAD(monto_original::varchar,15,'0') ||
+			LPAD(monto_actual::varchar,15,'0') ||
+			LPAD(monto_al_dia::varchar,15,'0') ||
+			LPAD(monto_mora_1_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_2_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_3_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_4_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_5_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_6_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_7_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_8_tramo::varchar,15,'0') ||
+			LPAD(monto_mora_9_tramo::varchar,15,'0') ||
+			LPAD(mora_actual::varchar,4,'0') ||
+			deuda_renegociada::varchar || 
+			deuda_acelerada::varchar                                         as "registro"
+		FROM reporte.rdc01_final;
+
+
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;
