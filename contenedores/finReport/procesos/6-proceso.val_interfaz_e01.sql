@@ -21,7 +21,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal)
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.id_garantia
@@ -57,7 +57,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal)
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.id_garantia
@@ -91,7 +91,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal)
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.id_garantia
@@ -129,7 +129,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal)
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.id_garantia
@@ -163,7 +163,7 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal)
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
 			VALUES(
 				 rec.fecha_proceso
 				,rec.id_garantia
