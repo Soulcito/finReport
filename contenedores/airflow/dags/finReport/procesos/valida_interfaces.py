@@ -11,7 +11,8 @@ GROUP_NAME = "valida_interfaces"
 
 PROCEDIMIENTOS = [
     ("proceso", "val_interfaz_a01"),
-    ("proceso", "val_interfaz_b01")
+    ("proceso", "val_interfaz_b01"),
+    ("proceso", "val_interfaz_c01")
 ]
 
 executor = ProcedureExecutor(PG_CONN, name=GROUP_NAME)
