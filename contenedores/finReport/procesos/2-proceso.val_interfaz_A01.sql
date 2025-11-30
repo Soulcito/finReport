@@ -178,7 +178,100 @@ BEGIN
 				,'A01-00005; Operacion no existe en la interfaz interface.cuadro_operaciones'
 			);			
 		    
-		END LOOP;				
+		END LOOP;		
+
+
+		/*
+			A01-00006: Valida que la operacion este informada una ves en la interfaz
+		*/		
+
+
+		FOR rec IN 
+
+			SELECT a.*
+		    FROM interface.cartera_operaciones a
+		    INNER JOIN 
+			   (
+              	  select cod_operacion, count(cod_operacion) as "cantidad" from interface.cartera_operaciones 	
+				  group by cod_operacion
+				  having count(cod_operacion) > 1
+			   ) AS b on a.cod_operacion = b.cod_operacion
+			   
+		
+		LOOP
+
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			VALUES(
+				 rec.fecha_proceso
+				,rec.rut
+				,rec.cod_persona
+				,rec.cod_operacion
+				,rec.cod_titulo_3
+				,rec.cod_tipo_obligacion
+				,rec.fecha_otorgamiento
+				,rec.carga_financiera
+				,rec.fecha_extincion
+				,rec.monto_original
+				,rec.capital
+				,rec.interes
+				,rec.otros
+				,rec.cod_moneda
+				,rec.fecha_aceleracion
+				,rec.deuda_renegociada
+				,rec.operacion_desfasada
+				,rec.fecha_a_rectificar
+				,rec.fecha_rectificacion
+				,rec.causal_rectificacion
+				,rec.numero_solicitud
+				,rec.valor_contable
+				,'A01-00006; Operacion se encuentra informada en la interfaz mas de una ves'
+			);		
+
+		END LOOP;					
+
+		/*
+			A01-00007: Valida que la fecha de otorgamiento sea menor o igual a la fecha de proceso
+		*/		
+
+
+		FOR rec IN 
+
+			SELECT a.*
+		    FROM interface.cartera_operaciones a
+		    WHERE a.fecha_otorgamiento > a.fecha_proceso
+			   
+		
+		LOOP
+
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			VALUES(
+				 rec.fecha_proceso
+				,rec.rut
+				,rec.cod_persona
+				,rec.cod_operacion
+				,rec.cod_titulo_3
+				,rec.cod_tipo_obligacion
+				,rec.fecha_otorgamiento
+				,rec.carga_financiera
+				,rec.fecha_extincion
+				,rec.monto_original
+				,rec.capital
+				,rec.interes
+				,rec.otros
+				,rec.cod_moneda
+				,rec.fecha_aceleracion
+				,rec.deuda_renegociada
+				,rec.operacion_desfasada
+				,rec.fecha_a_rectificar
+				,rec.fecha_rectificacion
+				,rec.causal_rectificacion
+				,rec.numero_solicitud
+				,rec.valor_contable
+				,'A01-00007; La fecha de otorgamiento es posterior a la fecha de proceso'
+			);		
+
+		END LOOP;							
+		
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;

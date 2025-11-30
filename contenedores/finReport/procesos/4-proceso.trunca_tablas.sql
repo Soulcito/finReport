@@ -45,6 +45,14 @@ BEGIN
 		DELETE FROM interno.tipo_deudor;
 		DELETE FROM interno.tipo_persona_rel;
 		DELETE FROM interno.tipo_persona;
+		TRUNCATE TABLE interno.parametros_generales;
+
+        -- REPORTES
+
+		TRUNCATE TABLE reporte.rdc01_texto;
+		TRUNCATE TABLE reporte.rdc01_detalle;
+		TRUNCATE TABLE reporte.rdc01_final;				
+		
 		
 		
 	EXCEPTION WHEN OTHERS THEN

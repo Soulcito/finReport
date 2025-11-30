@@ -23,11 +23,11 @@ BEGIN
 		RAISE NOTICE 'Fecha de proceso para RDC01: %', fecha_archivo;
 
 
-		-- | Borrado de tablas | --
+		-- | Borrado de tablas | --  SE PASA AL PROCEDIMIENTO DE BORRADO DE TABLAS
 		
-		truncate table reporte.rdc01_texto;
-		truncate table reporte.rdc01_detalle;
-		truncate table reporte.rdc01_final;		
+		--truncate table reporte.rdc01_texto;
+		--truncate table reporte.rdc01_detalle;
+		--truncate table reporte.rdc01_final;		
 
 		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
 
