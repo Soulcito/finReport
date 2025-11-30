@@ -32,6 +32,7 @@
 \ir /docker-entrypoint-initdb.d/procesos/3-proceso.val_interfaz_b01.sql
 \ir /docker-entrypoint-initdb.d/procesos/4-proceso.trunca_tablas.sql
 \ir /docker-entrypoint-initdb.d/procesos/5-proceso.val_interfaz_c01.sql
+\ir /docker-entrypoint-initdb.d/procesos/6-proceso.val_interfaz_e01.sql
 
 -- Ejecutar scripts de la carpeta reportes
 \echo '=== Ejecutando scripts de REPORTES ==='
