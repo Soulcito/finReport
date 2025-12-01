@@ -144,3 +144,37 @@ CREATE TABLE respaldo.cuadro_rectificaciones (
 	,causal_rectificacion       integer not null
 	,numero_solicitud           varchar(1000) not null
 );
+
+
+
+-- LOG historico para cuadro_rectificaciones
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'log'
+        AND table_name = 'cuadro_rectificaciones_hist'
+    ) THEN
+        EXECUTE 'DROP TABLE log.cuadro_rectificaciones_hist';
+    END IF;
+END;
+$$;
+
+-- log
+
+CREATE TABLE log.cuadro_rectificaciones_hist (
+	 fecha_proceso              date not null 
+	,fecha_a_rectificar         date not null
+	,cod_operacion              varchar(50) not null
+	,causal_eliminacion         integer not null
+	,campo_rdc01                integer not null
+	,valor                      varchar(250) not null
+	,fecha_rectificacion        date not null
+	,causal_rectificacion       integer not null
+	,numero_solicitud           varchar(1000) not null
+	,problema                   TEXT null
+);
+

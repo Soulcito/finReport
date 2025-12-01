@@ -153,3 +153,41 @@ CREATE TABLE respaldo.cuadro_operaciones (
 	,otros                      numeric(22,4) not null
 	,otros_pagado               numeric(22,4) not null
 );
+
+
+-- LOG historico para cuadro_operaciones
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'log'
+        AND table_name = 'cuadro_operaciones_hist'
+    ) THEN
+        EXECUTE 'DROP TABLE log.cuadro_operaciones_hist';
+    END IF;
+END;
+$$;
+
+-- log historico
+
+CREATE TABLE log.cuadro_operaciones_hist (
+	 fecha_proceso              date not null
+	,cod_operacion              varchar(250) not null
+	,fecha_cuota                date not null
+	,capital                    numeric(22,4) not null 
+	,capital_pagado             numeric(22,4) not null  
+	,interes_devengado          numeric(22,4) not null 
+	,interes_por_pagar          numeric(22,4) not null 
+	,interes_moroso             numeric(22,4) not null 
+	,interes_pagado             numeric(22,4) not null 
+	,otros                      numeric(22,4) not null 
+	,otros_pagado               numeric(22,4) not null 
+	,problema 					TEXT null
+);
+
+
+
+
