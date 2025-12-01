@@ -113,33 +113,3 @@ CREATE TABLE respaldo.tipo_cambio (
 	,cod_moneda                 varchar(50) not null
 	,valor                      numeric(22,6) not null
 );
-
-
-
--- Log historico para tipo_cambio
-
-DO
-$$
-BEGIN
-    IF EXISTS (
-        SELECT 1
-        FROM information_schema.tables
-        WHERE table_schema = 'log'
-        AND table_name = 'tipo_cambio_hist'
-    ) THEN
-        EXECUTE 'DROP TABLE log.tipo_cambio_hist';
-    END IF;
-END;
-$$;
-
--- log historico
-
-CREATE TABLE log.tipo_cambio_hist (
-	 fecha_proceso              date not null
-	,cod_moneda                 varchar(50) not null
-	,valor                      numeric(22,6) not null
-	,problema                   TEXT null
-);
-
-
-
