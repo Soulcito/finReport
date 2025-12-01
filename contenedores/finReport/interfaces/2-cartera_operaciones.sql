@@ -234,3 +234,49 @@ CREATE TABLE respaldo.cartera_operaciones (
 	,numero_solicitud           varchar(50) not null
 	,valor_contable             numeric(22,4) not null	
 );
+
+
+
+--log historico para cartera_operaciones
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'log'
+        AND table_name = 'cartera_operaciones_hist'
+    ) THEN
+        EXECUTE 'DROP TABLE log.cartera_operaciones_hist';
+    END IF;
+END;
+$$;
+
+-- Tabla log.cartera_operaciones_hist
+
+CREATE TABLE log.cartera_operaciones_hist (
+	 fecha_proceso              date not null
+	,rut                        varchar(20) not null
+	,cod_persona                varchar(50) not null
+	,cod_operacion              varchar(50) not null
+	,cod_titulo_3               varchar(50) not null
+	,cod_tipo_obligacion        varchar(50) not null
+	,fecha_otorgamiento         date not null
+	,carga_financiera           numeric(22,4) not null
+	,fecha_extincion            date not null
+	,monto_original             numeric(22,4) not null
+	,capital                    numeric(22,4) not null
+	,interes                    numeric(22,4) not null
+	,otros                      numeric(22,4) not null  
+	,cod_moneda                 varchar(50) not null 
+	,fecha_aceleracion          date not null
+	,deuda_renegociada          varchar(2) not null
+	,operacion_desfasada        varchar(2) not null
+	,fecha_a_rectificar         date not null
+	,fecha_rectificacion        date not null
+	,causal_rectificacion       varchar(2) not null
+	,numero_solicitud           varchar(50) not null
+	,valor_contable             numeric(22,4) not null	
+	,problema                   TEXT null
+);

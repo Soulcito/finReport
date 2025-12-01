@@ -5,7 +5,8 @@ from finReport.procesos import (
     limpia_tablas,
     import_mantenedores,
     import_interfaz,
-    valida_interfaces
+    valida_interfaces,
+    historico_log
 )
 
 with DAG(
@@ -21,5 +22,6 @@ with DAG(
     g2 = import_mantenedores.build_group(dag)
     g3 = import_interfaz.build_group(dag)
     g4 = valida_interfaces.build_group(dag)
+    g5 = historico_log.build_group(dag)
 
-    g1 >> g2 >> g3 >> g4
+    g1 >> g2 >> g3 >> g4 >> g5
