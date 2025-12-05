@@ -6,7 +6,9 @@ from finReport.procesos import (
     import_mantenedores,
     import_interfaz,
     valida_interfaces,
-    historico_log
+    historico_log,
+    ejecuta_reportes,
+    exporta_tabla_a_txt,
 )
 
 with DAG(
@@ -23,5 +25,7 @@ with DAG(
     g3 = import_interfaz.build_group(dag)
     g4 = valida_interfaces.build_group(dag)
     g5 = historico_log.build_group(dag)
+    g6 = ejecuta_reportes.build_group(dag)
+    g7 = exporta_tabla_a_txt.build_group(dag)
 
-    g1 >> g2 >> g3 >> g4 >> g5
+    g1 >> g2 >> g3 >> g4 >> g5 >> g6 >> g7
