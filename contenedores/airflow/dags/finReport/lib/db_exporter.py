@@ -46,7 +46,7 @@ class TableToTextExporter:
             cur = conn.cursor()
 
             # Consulta explícita de la columna 'registro'
-            query = sql.SQL("SELECT registro FROM {}.{} ORDER BY 1").format(
+            query = sql.SQL("SELECT registro FROM {}.{}").format(
                 sql.Identifier(schema), sql.Identifier(tabla)
             )
 
