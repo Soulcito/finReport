@@ -4,6 +4,7 @@ FROM apache/airflow:3.1.0-python3.12
 # ==========================================
 # CONFIGURACIÓN DE ENTORNO
 # ==========================================
+
 ENV AIRFLOW_HOME=/opt/airflow \
     AIRFLOW__CORE__LOAD_EXAMPLES=False \
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True \
@@ -11,9 +12,17 @@ ENV AIRFLOW_HOME=/opt/airflow \
     AIRFLOW__CORE__EXECUTOR=LocalExecutor
 
 # ==========================================
+# CONFIGURACIÓN DE ZONA HORARIA (CHILE)
+# ==========================================
+
+ENV TZ=America/Santiago
+USER root
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# ==========================================
 # INSTALACIÓN DE UTILIDADES DEL SISTEMA
 # ==========================================
-USER root
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
         vim nano curl netcat-openbsd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
