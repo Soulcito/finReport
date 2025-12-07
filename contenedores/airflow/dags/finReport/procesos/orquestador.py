@@ -9,6 +9,7 @@ from finReport.procesos import (
     historico_log,
     ejecuta_reportes,
     exporta_tabla_a_txt,
+    exporta_reportes_excel,
     exporta_logs,
 )
 
@@ -28,6 +29,7 @@ with DAG(
     g5 = historico_log.build_group(dag)
     g6 = ejecuta_reportes.build_group(dag)
     g7 = exporta_tabla_a_txt.build_group(dag)
-    g8 = exporta_logs.build_group(dag)
+    g8 = exporta_reportes_excel.build_group(dag)
+    g9 = exporta_logs.build_group(dag)
 
-    g1 >> g2 >> g3 >> g4 >> g5 >> g6 >> g7 >> g8
+    g1 >> g2 >> g3 >> g4 >> g5 >> g6 >> g7 >> g8 >> g9
