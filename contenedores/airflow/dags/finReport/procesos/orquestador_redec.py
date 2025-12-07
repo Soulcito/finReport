@@ -14,12 +14,12 @@ from finReport.procesos import (
 )
 
 with DAG(
-    dag_id="orquestador",
+    dag_id="orquestador_redec",
     start_date=datetime(1970, 1, 1),
     schedule=None,
     catchup=False,
     is_paused_upon_creation=False,
-    tags=["orquestador", "finReport"],
+    tags=["orquestador", "finReport", "redec"],
 ) as dag:
 
     g1 = limpia_tablas.build_group(dag)
