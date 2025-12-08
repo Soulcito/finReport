@@ -176,3 +176,27 @@ CREATE TABLE reporte.rdc01_hist (
 ); 
 
 
+
+-- TABLA RDC01 PARA LA CARATULA
+
+DO
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'reporte'
+        AND table_name = 'rdc01_caratula'
+    ) THEN
+        EXECUTE 'DROP TABLE reporte.rdc01_caratula';
+    END IF;
+END;
+$$;
+
+
+CREATE TABLE reporte.rdc01_caratula (
+	 fecha                   varchar(8) not null
+	,item					 varchar(2000) not NULL
+	,valor					 numeric(15) not null
+);
+

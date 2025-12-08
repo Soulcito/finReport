@@ -51,7 +51,8 @@ BEGIN
 
 		TRUNCATE TABLE reporte.rdc01_texto;
 		TRUNCATE TABLE reporte.rdc01_detalle;
-		TRUNCATE TABLE reporte.rdc01_final;				
+		TRUNCATE TABLE reporte.rdc01_final;		
+		TRUNCATE TABLE reporte.rdc01_caratula;
 		
 		
 		

@@ -5,6 +5,7 @@ DECLARE
 	rec RECORD;
 	fecha_archivo varchar(8);
 	codigo_institucion varchar(10);
+	var_valor numeric(15);
 	
 BEGIN
 	BEGIN
@@ -13,6 +14,14 @@ BEGIN
 			Proceso de generacion de RDC01
 		*/
 
+		-- | Trunca tablas de uso en el procedimiento | --		
+
+		TRUNCATE TABLE reporte.rdc01_caratula;
+		TRUNCATE TABLE reporte.rdc01_texto;
+		TRUNCATE TABLE reporte.rdc01_detalle;
+		TRUNCATE TABLE reporte.rdc01_final;
+
+		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
 
 		-- | Determina fecha de proceso | --		
 
@@ -21,15 +30,6 @@ BEGIN
 		from interface.cartera_operaciones;
 
 		RAISE NOTICE 'Fecha de proceso para RDC01: %', fecha_archivo;
-
-
-		-- | Borrado de tablas | --  SE PASA AL PROCEDIMIENTO DE BORRADO DE TABLAS
-		
-		--truncate table reporte.rdc01_texto;
-		--truncate table reporte.rdc01_detalle;
-		--truncate table reporte.rdc01_final;		
-
-		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
 
 		-- | Determina codigo de la institucion | --		
 
@@ -638,6 +638,155 @@ BEGIN
 			deuda_acelerada::varchar                                         as "registro"
 		FROM reporte.rdc01_final;
 
+
+		-- | GENERA CARATULA | --								
+
+		/* Item 1:  Número registros informados (recuento simple)*/
+
+		select count(1)
+		into var_valor
+		from reporte.rdc01_final;
+		
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Número registros informados (recuento simple)', var_valor);
+
+
+		/* Item 2:  Número de deudores vigentes (recuento de RUTs distintos)*/
+
+		 select count(1)
+		 into var_valor
+		 from (		 
+		   select rut from reporte.rdc01_final group by rut
+		 ) as B;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Número de deudores vigentes (recuento de RUTs distintos)', var_valor);		 
+
+
+		/* Item 3:  Total obligaciones reportables al día y operaciones contingentes (suma campo 16)*/		
+
+		select coalesce(sum(monto_al_dia),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables al día y operaciones contingentes (suma campo 16)', var_valor);
+
+
+		/* Item 4:  Total obligaciones reportables con morosidad menor a 30 días (suma campo 17)*/
+
+		select coalesce(sum(monto_mora_1_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad menor a 30 días (suma campo 17)', var_valor);
+
+
+		/* Item 5:  Total obligaciones reportables con morosidad desde 30 a menos de 60 días (suma campo 18)*/
+
+		select coalesce(sum(monto_mora_2_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde 30 a menos de 60 días (suma campo 18)', var_valor);
+
+
+		/* Item 6:  Total obligaciones reportables con morosidad desde 60 a menos de 90 días (suma campo 19)*/
+
+		select coalesce(sum(monto_mora_3_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde 60 a menos de 90 días (suma campo 19)', var_valor);
+
+
+		/* Item 7:  Total obligaciones reportables con morosidad desde 90 días a menos de 180 días (suma campo 20)*/
+
+		select coalesce(sum(monto_mora_4_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde 90 días a menos de 180 días (suma campo 20)', var_valor);		
+
+
+		/* Item 8:  Total obligaciones reportables con morosidad desde 180 días a menos de un año (suma campo 21)*/
+
+		select coalesce(sum(monto_mora_5_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde 180 días a menos de un año (suma campo 21)', var_valor);
+
+
+		/* Item 9:  Total obligaciones reportables con morosidad desde un año a menos de dos años (suma campo 22)*/
+
+		select coalesce(sum(monto_mora_6_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde un año a menos de dos años (suma campo 22)', var_valor);		
+		
+
+		/* Item 10:  Total obligaciones reportables con morosidad desde dos años a menos de tres años (suma campo 23)*/
+
+		select coalesce(sum(monto_mora_7_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde dos años a menos de tres años (suma campo 23)', var_valor);		
+
+
+		/* Item 11:  Total obligaciones reportables con morosidad desde tres años a menos de cuatro años (suma campo 24)*/
+
+		select coalesce(sum(monto_mora_8_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad desde tres años a menos de cuatro años (suma campo 24)', var_valor);
+
+
+		/* Item 12:  Total obligaciones reportables con morosidad superior a cuatro años (suma campo 25)*/
+
+		select coalesce(sum(monto_mora_9_tramo),0)
+		into var_valor
+		from reporte.rdc01_final;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total obligaciones reportables con morosidad superior a cuatro años (suma campo 25)', var_valor);
+
+
+		/* Item 13:  Número de deudores con morosidad en cualquier tramo (recuento distintivo de RUTs con montos de mora distintos de cero)*/
+
+		select count(1)
+		into var_valor
+		from (
+			select rut
+			from reporte.rdc01_final
+			where (monto_mora_1_tramo + monto_mora_2_tramo + monto_mora_3_tramo + monto_mora_4_tramo + monto_mora_5_tramo + monto_mora_6_tramo + monto_mora_7_tramo + monto_mora_8_tramo + monto_mora_9_tramo) > 0
+			group by rut
+		) as B;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Número de deudores con morosidad en cualquier tramo (recuento distintivo de RUTs con montos de mora distintos de cero)', var_valor);		
+
+
+		/* Item 14:  Total líneas de crédito de libre disposición (suma campo 15 para campo 6 igual a 42)*/
+
+		select coalesce(sum(monto_actual),0)
+		into var_valor
+		from reporte.rdc01_final
+		where tipo_obligacion = 42;
+
+		insert into reporte.rdc01_caratula (fecha, item, valor) 
+		values (fecha_archivo, 'Total líneas de crédito de libre disposición (suma campo 15 para campo 6 igual a 42)', var_valor);		
 
 		
 	EXCEPTION WHEN OTHERS THEN
