@@ -22,6 +22,7 @@
 \ir /docker-entrypoint-initdb.d/tablas_internas/6-interfaz_manager.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/7-parametros_generales.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/8-tipo_flujo.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/9-exclusion_morosidad.sql
 
 -- Ejecutar scripts de la carpeta logs
 \echo '=== Ejecutando scripts de LOGS ==='
@@ -36,6 +37,7 @@
 \ir /docker-entrypoint-initdb.d/procesos/5-proceso.val_interfaz_c01.sql
 \ir /docker-entrypoint-initdb.d/procesos/6-proceso.val_interfaz_e01.sql
 \ir /docker-entrypoint-initdb.d/procesos/7-proceso.genera_hist_log.sql
+\ir /docker-entrypoint-initdb.d/procesos/8-proceso.excluir_por_morosidad.sql
 
 
 -- Ejecutar scripts de la carpeta reportes

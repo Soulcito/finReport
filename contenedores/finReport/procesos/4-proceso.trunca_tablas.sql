@@ -15,6 +15,7 @@ BEGIN
 		TRUNCATE TABLE tmp.tipo_cambio;
 		TRUNCATE TABLE tmp.cuadro_rectificaciones;
 		TRUNCATE TABLE tmp.cartera_garantias;
+		TRUNCATE TABLE tmp.variacion_stock;
 
 		-- LOG
 
@@ -24,6 +25,7 @@ BEGIN
 		TRUNCATE TABLE log.tipo_cambio;
 		TRUNCATE TABLE log.cuadro_rectificaciones;
 		TRUNCATE TABLE log.cartera_garantias;
+		TRUNCATE TABLE log.variacion_stock;
 
 		-- INTERFACE
 
@@ -32,6 +34,7 @@ BEGIN
 		TRUNCATE TABLE interface.tipo_cambio;
 		TRUNCATE TABLE interface.cuadro_rectificaciones;
 		TRUNCATE TABLE interface.cartera_garantias;
+		TRUNCATE TABLE interface.variacion_stock;
 
 		-- INTERNO
 
@@ -46,6 +49,8 @@ BEGIN
 		DELETE FROM interno.tipo_persona_rel;
 		DELETE FROM interno.tipo_persona;
 		TRUNCATE TABLE interno.parametros_generales;
+		DELETE FROM interno.tipo_flujo_rel;
+		DELETE FROM interno.tipo_flujo;
 
         -- REPORTES
 
@@ -53,7 +58,16 @@ BEGIN
 		TRUNCATE TABLE reporte.rdc01_detalle;
 		TRUNCATE TABLE reporte.rdc01_final;		
 		TRUNCATE TABLE reporte.rdc01_caratula;
-		
+		TRUNCATE TABLE reporte.rdc20_texto;
+		TRUNCATE TABLE reporte.rdc20_detalle_1;
+		TRUNCATE TABLE reporte.rdc20_detalle_2;		
+		TRUNCATE TABLE reporte.rdc20_detalle_3;		
+		TRUNCATE TABLE reporte.rdc20_detalle_4;		
+		TRUNCATE TABLE reporte.rdc20_final_1;		
+		TRUNCATE TABLE reporte.rdc20_final_2;
+		TRUNCATE TABLE reporte.rdc20_final_3;
+		TRUNCATE TABLE reporte.rdc20_final_4;		
+		TRUNCATE TABLE reporte.rdc20_caratula;				
 		
 		
 	EXCEPTION WHEN OTHERS THEN

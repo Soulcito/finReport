@@ -168,7 +168,7 @@ BEGIN
 			CURRENT_TIMESTAMP,
 			'ERROR',
 			'',
-			'proceso.genera_rdc01',
+			'proceso.genera_hist_log',
 			SQLERRM
 		);
 	END;

@@ -526,6 +526,12 @@ BEGIN
 		where tipo_deudor = 2;
 
 
+		-- | EXCLUSION DE MOROSOS QUE CUMPLIERON 5 AñOS O MAS | --
+
+		delete from reporte.rdc01_detalle a
+		using interno.exclusion_morosidad b
+		where a.codigo_operacion = b.cod_operacion
+		  and b.fecha_exclusion <= a.fecha_proceso;
 
 
 		-- | GENERA RDC01_FINAL | --						

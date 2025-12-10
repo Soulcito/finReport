@@ -15,7 +15,10 @@ REPORT_DIR = "/opt/airflow/finReport/reports"
 # Lista de reportes configurables
 # Cada item = (schema, tabla, out_dir, pos_nombre, largo_nombre)
 
-REPORTES = [("reporte", "rdc01_texto", REPORT_DIR, 11, 13)]
+REPORTES = [
+    ("reporte", "rdc01_texto", REPORT_DIR, 11, 13),
+    ("reporte", "rdc20_texto", REPORT_DIR, 11, 13),
+]
 
 
 # Instancia única del exportador
