@@ -16,7 +16,15 @@ NOMBRE_EXCEL = "Reportes"
 # Lista de tablas a exportar:
 # Cada item = (schema, tabla)
 
-TABLAS_EXCEL = [("reporte", "rdc01_final"), ("reporte", "rdc01_caratula")]
+TABLAS_EXCEL = [
+    ("reporte", "rdc01_final"),
+    ("reporte", "rdc01_caratula"),
+    ("reporte", "rdc20_final_1"),
+    ("reporte", "rdc20_final_2"),
+    ("reporte", "rdc20_final_3"),
+    ("reporte", "rdc20_final_4"),
+    ("reporte", "rdc20_caratula"),
+]
 
 
 # Instancia única del exportador
