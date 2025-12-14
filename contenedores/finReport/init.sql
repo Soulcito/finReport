@@ -23,6 +23,7 @@
 \ir /docker-entrypoint-initdb.d/tablas_internas/7-parametros_generales.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/8-tipo_flujo.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/9-exclusion_morosidad.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/10-calendario_rdc20.sql
 
 -- Ejecutar scripts de la carpeta logs
 \echo '=== Ejecutando scripts de LOGS ==='
@@ -38,7 +39,7 @@
 \ir /docker-entrypoint-initdb.d/procesos/6-proceso.val_interfaz_e01.sql
 \ir /docker-entrypoint-initdb.d/procesos/7-proceso.genera_hist_log.sql
 \ir /docker-entrypoint-initdb.d/procesos/8-proceso.excluir_por_morosidad.sql
-
+\ir /docker-entrypoint-initdb.d/procesos/9-proceso.calculo_calendario_rdc20.sql
 
 -- Ejecutar scripts de la carpeta reportes
 \echo '=== Ejecutando scripts de REPORTES ==='
@@ -46,6 +47,7 @@
 \ir /docker-entrypoint-initdb.d/reportes/2-rdc01.sql
 \ir /docker-entrypoint-initdb.d/reportes/3-proceso.genera_rdc01.sql
 \ir /docker-entrypoint-initdb.d/reportes/4-rdc20.sql
+\ir /docker-entrypoint-initdb.d/reportes/5-proceso.genera_rdc20.sql
 
 
 \echo '=== Inicialización completada ==='

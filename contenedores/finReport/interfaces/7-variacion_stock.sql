@@ -23,7 +23,7 @@ CREATE TABLE tmp.variacion_stock (
 	,tipo_flujo				    varchar(250) null
 	,fecha_efectivo_flujo		varchar(250) null
 	,ident_tribunal				varchar(250) null
-	,monto						varchar(250) null
+	--,monto						varchar(250) null
 	,rut_tecera_parte			varchar(250) null
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE log.variacion_stock (
 	,tipo_flujo				    varchar(50) not null
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
-	,monto						numeric(22,6) not null
+	--,monto						numeric(22,6) not null
 	,rut_tecera_parte			varchar(20) not null
 	,problema                   TEXT null
 );
@@ -78,7 +78,7 @@ CREATE TABLE interface.variacion_stock (
 	,tipo_flujo				    varchar(50) not null
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
-	,monto						numeric(22,6) not null
+	--,monto						numeric(22,6) not null
 	,rut_tecera_parte			varchar(20) not null
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE historico.variacion_stock (
 	,tipo_flujo				    varchar(50) not null
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
-	,monto						numeric(22,6) not null
+	--,monto						numeric(22,6) not null
 	,rut_tecera_parte			varchar(20) not null
 );
 
@@ -130,7 +130,7 @@ CREATE TABLE respaldo.variacion_stock (
 	,tipo_flujo				    varchar(50) not null
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
-	,monto						numeric(22,6) not null
+	--,monto						numeric(22,6) not null
 	,rut_tecera_parte			varchar(20) not null
 );
 
@@ -159,7 +159,7 @@ CREATE TABLE log.variacion_stock_hist (
 	,tipo_flujo				    varchar(50) not null
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
-	,monto						numeric(22,6) not null
+	--,monto						numeric(22,6) not null
 	,rut_tecera_parte			varchar(20) not null
 	,problema                   TEXT null
 );
