@@ -40,6 +40,8 @@
 \ir /docker-entrypoint-initdb.d/procesos/7-proceso.genera_hist_log.sql
 \ir /docker-entrypoint-initdb.d/procesos/8-proceso.excluir_por_morosidad.sql
 \ir /docker-entrypoint-initdb.d/procesos/9-proceso.calculo_calendario_rdc20.sql
+\ir /docker-entrypoint-initdb.d/procesos/10-proceso.genera_hist_interface.sql
+
 
 -- Ejecutar scripts de la carpeta reportes
 \echo '=== Ejecutando scripts de REPORTES ==='

@@ -12,6 +12,7 @@ GROUP_NAME = "otros_procesos"
 PROCEDIMIENTOS = [
     ("proceso", "excluir_por_morosidad"),
     ("proceso", "calculo_calendario_rdc20"),
+    ("proceso", "genera_hist_interface"),
 ]
 
 executor = ProcedureExecutor(PG_CONN, name=GROUP_NAME)
