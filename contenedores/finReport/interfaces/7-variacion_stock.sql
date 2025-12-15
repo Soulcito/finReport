@@ -24,7 +24,7 @@ CREATE TABLE tmp.variacion_stock (
 	,fecha_efectivo_flujo		varchar(250) null
 	,ident_tribunal				varchar(250) null
 	--,monto						varchar(250) null
-	,rut_tecera_parte			varchar(250) null
+	,rut_tercera_parte			varchar(250) null
 );
 
 
@@ -51,7 +51,7 @@ CREATE TABLE log.variacion_stock (
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
 	--,monto						numeric(22,6) not null
-	,rut_tecera_parte			varchar(20) not null
+	,rut_tercera_parte			varchar(20) not null
 	,problema                   TEXT null
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE interface.variacion_stock (
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
 	--,monto						numeric(22,6) not null
-	,rut_tecera_parte			varchar(20) not null
+	,rut_tercera_parte			varchar(20) not null
 );
 
 DO
@@ -105,7 +105,7 @@ CREATE TABLE historico.variacion_stock (
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
 	--,monto						numeric(22,6) not null
-	,rut_tecera_parte			varchar(20) not null
+	,rut_tercera_parte			varchar(20) not null
 );
 
 DO
@@ -131,7 +131,7 @@ CREATE TABLE respaldo.variacion_stock (
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
 	--,monto						numeric(22,6) not null
-	,rut_tecera_parte			varchar(20) not null
+	,rut_tercera_parte			varchar(20) not null
 );
 
 
@@ -160,7 +160,7 @@ CREATE TABLE log.variacion_stock_hist (
 	,fecha_efectivo_flujo		date not null
 	,ident_tribunal				varchar(50) not null
 	--,monto						numeric(22,6) not null
-	,rut_tecera_parte			varchar(20) not null
+	,rut_tercera_parte			varchar(20) not null
 	,problema                   TEXT null
 );
 

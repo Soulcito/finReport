@@ -160,6 +160,23 @@ BEGIN
 			,problema
 		FROM log.cartera_garantias;
 
+
+		-- | Ingresa historico variacion_stoc_hist | --						
+
+		DELETE FROM log.variacion_stock_hist
+		where fecha_proceso = fecha_archivo;
+
+		INSERT INTO log.variacion_stock_hist (fecha_proceso, cod_operacion, tipo_flujo, fecha_efectivo_flujo, ident_tribunal, rut_tercera_parte, problema)
+		SELECT
+			 fecha_proceso
+			,cod_operacion
+			,tipo_flujo
+			,fecha_efectivo_flujo
+			,ident_tribunal
+			,rut_tercera_parte
+			,problema
+		FROM log.variacion_stock;
+
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;
