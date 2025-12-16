@@ -10,12 +10,23 @@ PORT_HOST="25433"
 SERVER_HOST="localhost"
 NETWORK_NAME="finreport-net"
 
-POSTGRES_DB="finreport_db"
-POSTGRES_USER="finreport_user"
-POSTGRES_PASSWORD="Finr3p0rt@2025"
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATA_DIR="$SCRIPT_DIR/pgdata"
+
+# ==========================================
+# CARGA DE VARIABLES DESDE postgres.env
+# ==========================================
+ENV_FILE="postgres.env"
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: Archivo $ENV_FILE no encontrado"
+  exit 1
+fi
+
+set -a
+source "$ENV_FILE"
+set +a
+
 
 # ==========================================
 # CREAR DIRECTORIOS SI NO EXISTEN
@@ -115,7 +126,7 @@ else
         -e POSTGRES_USER="$POSTGRES_USER" \
         -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
         -p "$PORT_HOST:5432" \
-        -v "$DATA_DIR:/var/lib/postgresql/data" \
+        -v "$DATA_DIR:/var/lib/postgresql" \
         "$IMAGE_NAME"
 fi
 
