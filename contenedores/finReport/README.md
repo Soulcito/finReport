@@ -14,9 +14,8 @@ chmod +x run_postgres.sh
 
 
 # ==========================================
-# PostgreSQL - FinReport
+# PostgreSQL - finReport
 # ==========================================
 POSTGRES_DB=<nombre de la instancia>
 POSTGRES_USER=<usuario>
 POSTGRES_PASSWORD=<Password>
-
