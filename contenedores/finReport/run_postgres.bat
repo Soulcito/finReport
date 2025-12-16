@@ -12,9 +12,18 @@ set "PORT_HOST=25433"
 set "SERVER_HOST=localhost"
 set "NETWORK_NAME=finreport-net"
 
-set "POSTGRES_DB=finreport_db"
-set "POSTGRES_USER=finreport_user"
-set "POSTGRES_PASSWORD=Finr3p0rt@2025"
+
+:: ==========================================
+:: CARGA DE VARIABLES DESDE postgres.env
+:: ==========================================
+if not exist postgres.env (
+    echo ERROR: Archivo postgres.env no encontrado
+    exit /b 1
+)
+
+for /f "usebackq delims=" %%A in ("postgres.env") do (
+    set %%A
+)
 
 set "DATA_DIR=%cd%\pgdata"
 
@@ -117,7 +126,7 @@ if %errorlevel%==0 (
 	  -e POSTGRES_USER=%POSTGRES_USER% ^
 	  -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% ^
 	  -p %PORT_HOST%:5432 ^
-	  -v "%DATA_DIR%:/var/lib/postgresql/data" ^
+	  -v "%DATA_DIR%:/var/lib/postgresql" ^
 	  %IMAGE_NAME%
 )
 

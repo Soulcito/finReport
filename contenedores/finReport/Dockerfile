@@ -3,12 +3,6 @@
 # ============================================
 FROM postgres:18
 
-# Variables de entorno
-ENV POSTGRES_DB=finreport_db
-ENV POSTGRES_USER=finreport_user
-ENV POSTGRES_PASSWORD=Finr3p0rt@2025
-ENV PGDATA=/var/lib/postgresql/data
-
 # Copiar configuración y scripts
 COPY ./conf/postgresql.conf /etc/postgresql/postgresql.conf
 COPY ./init.sql /docker-entrypoint-initdb.d/init.sql
