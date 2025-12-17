@@ -47,7 +47,7 @@ Tener docker instalado
 4) Dentro de la carpeta finReport se debe crear el archivo postgres.env, dentro de este se colocan el nombre de la base de datos, el usuario y password, adjunto ejemplo:
 
 <p align="center">
-  <img src="image.png" alt="alt text" width="400">
+  <img src="imagenes\image.png" alt="alt text" width="400">
 </p>
 
 5) Luego ejecutar:
