@@ -31,9 +31,25 @@ class MultiTableToExcelExporter:
 
         """
 
-        # Agregar fecha/hora/minuto/segundo al nombre del Excel
+        # Consultar fecha de proceso para concatenar en las salidas de los archivos
+        
+        conn_tmp = psycopg2.connect(**self.conn_params)
+        cur_tmp = conn_tmp.cursor()
+
+        cur_tmp.execute("""
+            SELECT TO_CHAR(MAX(fecha_proceso), 'YYYYMMDD')::VARCHAR
+            FROM interface.cartera_operaciones
+        """)
+
+        fecha_proceso = cur_tmp.fetchone()[0]
+
+        cur_tmp.close()
+        conn_tmp.close()
+        
+
+        # Agregar fecha_proceso y fecha de ejecucion /hora/minuto/segundo al nombre del Excel
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        nombre_final = f"{nombre_excel}_{timestamp}.xlsx"
+        nombre_final = f"{nombre_excel}_{fecha_proceso}_{timestamp}.xlsx"
         ruta_excel = os.path.join(out_dir, nombre_final)
 
         wb = Workbook()
