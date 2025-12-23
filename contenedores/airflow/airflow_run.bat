@@ -12,33 +12,48 @@ set "PORT_HOST=8181"
 set "SERVER_HOST=localhost"
 set "NETWORK_NAME=finreport-net"
 
+:: ==================================================
 :: Directorios locales para persistencia de Airflow
+:: ==================================================
+
 set "DAGS_DIR=%cd%\dags"
 set "LOGS_DIR=%cd%\logs"
 set "PLUGINS_DIR=%cd%\plugins"
 
+:: ==================================================
 :: Directorios locales para finReport
+:: ==================================================
+
 set "FINREPORT_DIR=%cd%\finReport"
 set "INTERFACE=%FINREPORT_DIR%\interface"
 set "REPORTS=%FINREPORT_DIR%\reports"
 set "LOGS_FINREPORT=%FINREPORT_DIR%\logs"
 set "MANTENEDORES=%FINREPORT_DIR%\mantenedores"
+set "VALIDADOR=%FINREPORT_DIR%\validador"
+set "VALIDADOR_RESULTADO=%VALIDADOR%\resultado"
 
 :: ================================
 :: CREAR DIRECTORIOS SI NO EXISTEN
 :: ================================
-if not exist "%DAGS_DIR%" mkdir "%DAGS_DIR%"
-if not exist "%LOGS_DIR%" mkdir "%LOGS_DIR%"
-if not exist "%PLUGINS_DIR%" mkdir "%PLUGINS_DIR%"
-if not exist "%FINREPORT_DIR%" mkdir "%FINREPORT_DIR%"
-if not exist "%INTERFACE%" mkdir "%INTERFACE%"
-if not exist "%REPORTS%" mkdir "%REPORTS%"
-if not exist "%LOGS_FINREPORT%" mkdir "%LOGS_FINREPORT%"
-if not exist "%MANTENEDORES%" mkdir "%MANTENEDORES%"
 
-:: ================================
+for %%d in (
+    "%DAGS_DIR%"
+    "%LOGS_DIR%"
+    "%PLUGINS_DIR%"
+    "%FINREPORT_DIR%"
+    "%INTERFACE%"
+    "%REPORTS%"
+    "%LOGS_FINREPORT%"
+    "%MANTENEDORES%"
+    "%VALIDADOR%"
+    "%VALIDADOR_RESULTADO%"
+) do (
+    if not exist %%d mkdir %%d
+)
+
+:: ============================================================
 :: MOVER CONTENIDO DE /mantenedores → /finReport/mantenedores
-:: ================================
+:: ============================================================
 if exist "%cd%\mantenedores" (
     echo Moviendo contenido desde carpeta raiz "mantenedores" a "%MANTENEDORES%"
     xcopy "%cd%\mantenedores\*" "%MANTENEDORES%\" /E /Y >nul
@@ -68,9 +83,9 @@ if %errorlevel% neq 0 (
     )
 )
 
-:: ================================
+:: =========================================================
 :: SI EL USUARIO QUIERE RECREAR, ELIMINAMOS EL CONTENEDOR
-:: ================================
+:: =========================================================
 if "%REBUILD_IMAGE%"=="1" (
     echo.
     echo Verificando si existe el contenedor %CONTAINER_NAME%...
@@ -110,6 +125,41 @@ echo ================================
 :: Verificar si el contenedor existe
 docker ps -a --format "{{.Names}}" | find "%CONTAINER_NAME%" >nul
 if %errorlevel%==0 (
+
+    :: ============================================
+    :: VALIDAR IMAGEN DEL CONTENEDOR (AUTO-RECREAR)
+    :: ============================================
+    set "RECREATE_CONTAINER=0"
+	set "CONTAINER_IMAGE_LABEL="
+
+    for /f "delims=" %%i in (
+        'docker inspect -f "{{ index .Config.Labels \"finreport.image\" }}" %CONTAINER_NAME% 2^>nul'
+    ) do set "CONTAINER_IMAGE_LABEL=%%i"
+
+    if not defined CONTAINER_IMAGE_LABEL (
+        echo El contenedor %CONTAINER_NAME% no tiene label finreport.image
+        set "RECREATE_CONTAINER=1"
+    )
+
+    if defined CONTAINER_IMAGE_LABEL (
+        if /i not "%CONTAINER_IMAGE_LABEL%"=="%IMAGE_NAME%" (
+            echo El contenedor %CONTAINER_NAME% usa imagen distinta:
+            echo   Actual  : %CONTAINER_IMAGE_LABEL%
+            echo   Esperada: %IMAGE_NAME%
+            set "RECREATE_CONTAINER=1"
+        )
+    )
+
+    if "%RECREATE_CONTAINER%"=="1" (
+        echo.
+        echo Recreando contenedor %CONTAINER_NAME%...
+        docker stop %CONTAINER_NAME% >nul 2>&1
+        docker rm %CONTAINER_NAME% >nul 2>&1
+
+        :: Forzamos que el flujo continúe como "contenedor no existente"
+        goto CREATE_CONTAINER
+    )
+
     docker ps --format "{{.Names}}" | find "%CONTAINER_NAME%" >nul
     if %errorlevel%==0 (
         echo El contenedor %CONTAINER_NAME% está corriendo.
@@ -130,6 +180,10 @@ if %errorlevel%==0 (
         )
     )
 ) else (
+	goto CREATE_CONTAINER
+)
+
+:CREATE_CONTAINER
     echo Creando nuevo contenedor con persistencia...
     docker run -d --name %CONTAINER_NAME% ^
       --network %NETWORK_NAME% ^
@@ -141,8 +195,8 @@ if %errorlevel%==0 (
       -v "%REPORTS%:/opt/airflow/finReport/reports" ^
       -v "%LOGS_FINREPORT%:/opt/airflow/finReport/logs" ^
       -v "%MANTENEDORES%:/opt/airflow/finReport/mantenedores" ^
+	  -v "%VALIDADOR%:/opt/airflow/finReport/validador" ^
       %IMAGE_NAME%
-)
 
 echo.
 echo Esperando a que Airflow inicialice...
