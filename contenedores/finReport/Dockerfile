@@ -12,6 +12,7 @@ COPY ./data /docker-entrypoint-initdb.d/data
 COPY ./logss /docker-entrypoint-initdb.d/logss
 COPY ./procesos /docker-entrypoint-initdb.d/procesos
 COPY ./reportes /docker-entrypoint-initdb.d/reportes
+COPY ./validadores /docker-entrypoint-initdb.d/validadores
 
 RUN chown -R postgres:postgres /etc/postgresql && \
     chmod 640 /etc/postgresql/postgresql.conf
