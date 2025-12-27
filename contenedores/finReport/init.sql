@@ -56,6 +56,14 @@
 \echo '=== Ejecutando scripts de VALIDADORES ==='
 \ir /docker-entrypoint-initdb.d/reportes/1-schema.sql
 \ir /docker-entrypoint-initdb.d/reportes/2-rdc01.sql
-
+\ir /docker-entrypoint-initdb.d/reportes/3-proceso.val_num_1.sql
+\ir /docker-entrypoint-initdb.d/reportes/4-proceso.val_num_2.sql
+\ir /docker-entrypoint-initdb.d/reportes/5-proceso.val_num_3.sql
+\ir /docker-entrypoint-initdb.d/reportes/6-proceso.val_num_4.sql
+\ir /docker-entrypoint-initdb.d/reportes/7-proceso.val_codigo_tabla.sql
+\ir /docker-entrypoint-initdb.d/reportes/8-proceso.val_num_9.sql
+\ir /docker-entrypoint-initdb.d/reportes/9-proceso.val_num_10.sql
+\ir /docker-entrypoint-initdb.d/reportes/10-proceso.val_num_11.sql
+\ir /docker-entrypoint-initdb.d/reportes/11-proceso.val_en_dominio.sql
 
 \echo '=== Inicialización completada ==='
