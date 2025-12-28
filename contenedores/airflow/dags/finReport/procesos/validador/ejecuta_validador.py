@@ -7,19 +7,18 @@ from finReport.lib.db_config import PG_CONN
 # CONFIGURACIÓN
 # ==============================
 
-GROUP_NAME = "ejecuta_reportes"
+GROUP_NAME = "ejecuta_validador"
 
 PROCEDIMIENTOS = [
-    ("proceso", "genera_rdc01"),
-    ("proceso", "genera_rdc20")    
+    ("proceso", "val_reporte_rdc01"),
+    ("proceso", "val_reporte_rdc20"),
 ]
 
 executor = ProcedureExecutor(PG_CONN, name=GROUP_NAME)
 
 # ==============================
-# TASK GROUP BUILDER (Ejecución secuencial)
+# TASK GROUP BUILDER
 # ==============================
-
 
 def build_group(dag):
 
