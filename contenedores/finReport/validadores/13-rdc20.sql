@@ -148,6 +148,7 @@ $$;
 CREATE TABLE validador.rdc20_resultado (
 	 linea						int not null
 	,num_validador				int not null
+	,descripcion				varchar(2000) not null
 	,tipo_registro				varchar(10)	 not null
 	,campo                      varchar(50) not null
 	,dato_reportado				varchar(2000) not null

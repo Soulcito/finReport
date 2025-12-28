@@ -3,6 +3,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	rec RECORD;
+	v_descripcion varchar(2000);
 BEGIN
 
 		/**************************************************/
@@ -69,10 +70,13 @@ BEGIN
 			1: Codigo de la institucion no corresponde
 		*/
 
-		insert into validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 1;
+
+		insert into validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 		SELECT 
 			 linea
 			,1        											as "num_validador"
+			,v_descripcion										as "descripcion"
 			,''													as "tipo_registro"
 			,'header-cod_institucion'							as "campo"	
 			,substring(registro,1,10)							as "dato_reportado"
@@ -84,11 +88,13 @@ BEGIN
 			2: Identificacion del archivo no corresponde
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 2;
 
-		insert into validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+		insert into validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 		SELECT 
 			 linea
 			,2        											as "num_validador"
+			,v_descripcion										as "descripcion"
 			,''													as "tipo_registro"
 			,'header-ident_archivo'								as "campo"
 			,substring(registro,11,5)							as "dato_reportado"
@@ -99,12 +105,14 @@ BEGIN
 		/*
 			9: Fecha reportada no corresponde al formato YYYYMMDD
 		*/
-		
 
-		insert into validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 9;		
+
+		insert into validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 		SELECT 
 			 linea
 			,9        											as "num_validador"
+			,v_descripcion										as "descripcion"
 			,''													as "tipo_registro"
 			,'header-fecha_archivo'											as "campo"
 			,substring(registro,16,8)							as "dato_reportado"
@@ -116,11 +124,13 @@ BEGIN
 			16: Filler debe ser completado con espacios y tener un largo especifico
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 16;
 
-		insert into validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+		insert into validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 		SELECT 
 			 linea
 			,16        												as "num_validador"
+			,v_descripcion											as "descripcion"
 			,''														as "tipo_registro"
 			,'header-filler'										as "campo"
 			,substring(registro, 24, 59)							as "dato_reportado"
@@ -132,12 +142,14 @@ BEGIN
 			3: Largo del registro no corresponde
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 3;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,3                  					as "num_validador"
+				,v_descripcion							as "descripcion"
 				,''										as "tipo_registro"	
 				,'registro'								as "campo"
 				,registro								as "dato_reportado"
@@ -146,10 +158,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -163,12 +176,14 @@ BEGIN
 			14: Tipo de registro no corresponde
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 14;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,14                 																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,''																					as "tipo_registro"	
 				,'tipo_registro'																	as "campo"
 				,substring(registro, 1, 2)															as "dato_reportado"
@@ -177,10 +192,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -195,13 +211,15 @@ BEGIN
 			Campo: tipo_obligacion
 			Tipo_registro: 1			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 8;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,8                 																	as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'01'																				as "tipo_registro"	
 				,'tipo_obligacion'																	as "campo"
 				,tipo_obligacion																	as "dato_reportado"
@@ -210,10 +228,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -230,11 +249,14 @@ BEGIN
 		*/
 		
 
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 15;
+
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,15                																	as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'01'																				as "tipo_registro"	
 				,'tipo_flujo'																		as "campo"
 				,tipo_flujo																			as "dato_reportado"
@@ -243,10 +265,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -262,12 +285,14 @@ BEGIN
 			Tipo_registro: 1			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,10                																	as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'01'																				as "tipo_registro"	
 				,'monto'																			as "campo"
 				,monto																				as "dato_reportado"
@@ -276,10 +301,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -295,12 +321,14 @@ BEGIN
 			Tipo_registro: 1			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 16;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,16                 																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'01'																				as "tipo_registro"	
 				,'filler'																			as "campo"
 				,filler																				as "dato_reportado"
@@ -309,10 +337,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -327,13 +356,15 @@ BEGIN
 			Campo: rut_deudor
 			Tipo_registro: 2			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 4;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,4                 																		as "num_validador"
+				,v_descripcion																			as "descripcion"
 				,'02'																					as "tipo_registro"	
 				,'rut_deudor'																			as "campo"
 				,rut_deudor																				as "dato_reportado"
@@ -342,10 +373,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -360,13 +392,15 @@ BEGIN
 			Campo: fecha_informacion
 			Tipo_registro: 2			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 9;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,9                 																		as "num_validador"
+				,v_descripcion																			as "descripcion"
 				,'02'																					as "tipo_registro"	
 				,'fecha_informacion'																	as "campo"
 				,fecha_informacion																		as "dato_reportado"
@@ -375,10 +409,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -393,13 +428,15 @@ BEGIN
 			Campo: tipo_obligacion
 			Tipo_registro: 2			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 8;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,8                 																		as "num_validador"
+				,v_descripcion																			as "descripcion"
 				,'02'																					as "tipo_registro"	
 				,'tipo_obligacion'																		as "campo"
 				,tipo_obligacion																		as "dato_reportado"
@@ -408,10 +445,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -427,12 +465,14 @@ BEGIN
 			Tipo_registro: 2			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,10                																		as "num_validador"
+				,v_descripcion																			as "descripcion"
 				,'02'																					as "tipo_registro"	
 				,'ident_tribunal'																		as "campo"
 				,ident_tribunal																			as "dato_reportado"
@@ -441,10 +481,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -460,12 +501,14 @@ BEGIN
 			Tipo_registro: 2			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,10                																		as "num_validador"
+				,v_descripcion																			as "descripcion"
 				,'02'																					as "tipo_registro"	
 				,'monto'																				as "campo"
 				,monto																					as "dato_reportado"
@@ -474,10 +517,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -493,12 +537,14 @@ BEGIN
 			Tipo_registro: 2			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 16;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,16                 																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'02'																				as "tipo_registro"	
 				,'filler'																			as "campo"
 				,filler																				as "dato_reportado"
@@ -507,10 +553,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -526,12 +573,14 @@ BEGIN
 			Tipo_registro: 3			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 4;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,4 	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'03'																				as "tipo_registro"	
 				,'rut_comprador'																	as "campo"
 				,rut_comprador																		as "dato_reportado"
@@ -540,10 +589,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -559,12 +609,14 @@ BEGIN
 			Tipo_registro: 3			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 4;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,4 	                																as "num_validador"
+				,v_descripcion																		as "descripcion"	
 				,'03'																				as "tipo_registro"	
 				,'rut_deudor'																		as "campo"
 				,rut_deudor																			as "dato_reportado"
@@ -573,10 +625,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -592,12 +645,14 @@ BEGIN
 			Tipo_registro: 3			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 9;	
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,9 	                																as "num_validador"
+				,v_descripcion																		as "descripcion"	
 				,'03'																				as "tipo_registro"	
 				,'fecha_informacion'																as "campo"
 				,fecha_informacion																	as "dato_reportado"
@@ -606,10 +661,11 @@ BEGIN
 		
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -624,13 +680,15 @@ BEGIN
 			Campo: tipo_obligacion
 			Tipo_registro: 3			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 8;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,8 	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'03'																				as "tipo_registro"	
 				,'tipo_obligacion'																	as "campo"
 				,tipo_obligacion																	as "dato_reportado"
@@ -639,10 +697,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -657,13 +716,15 @@ BEGIN
 			Campo: monto
 			Tipo_registro: 3			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,10	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'03'																				as "tipo_registro"	
 				,'monto'																			as "campo"
 				,monto																				as "dato_reportado"
@@ -672,10 +733,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -691,12 +753,14 @@ BEGIN
 			Tipo_registro: 4			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 4;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,4	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'04'																				as "tipo_registro"	
 				,'rut_vendedor'																		as "campo"
 				,rut_vendedor																		as "dato_reportado"
@@ -705,10 +769,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -724,12 +789,14 @@ BEGIN
 			Tipo_registro: 4			
 		*/
 		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 4;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,4	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'04'																				as "tipo_registro"	
 				,'rut_deudor'																		as "campo"
 				,rut_deudor																			as "dato_reportado"
@@ -738,10 +805,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -756,13 +824,15 @@ BEGIN
 			Campo: fecha_informacion
 			Tipo_registro: 4			
 		*/
-		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 9;		
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,9	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'04'																				as "tipo_registro"	
 				,'fecha_informacion'																as "campo"
 				,fecha_informacion																	as "dato_reportado"
@@ -771,10 +841,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -789,11 +860,14 @@ BEGIN
 			Tipo_registro: 4
 		*/		
 
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 8;
+
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,8	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'04'																				as "tipo_registro"	
 				,'tipo_obligacion'																	as "campo"
 				,tipo_obligacion																	as "dato_reportado"
@@ -802,10 +876,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -821,11 +896,14 @@ BEGIN
 			Tipo_registro: 4
 		*/		
 
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
+
 		FOR rec IN 
 
 			SELECT 
 				 linea
 				,10	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
 				,'04'																				as "tipo_registro"	
 				,'monto'																			as "campo"
 				,monto																				as "dato_reportado"
@@ -834,10 +912,11 @@ BEGIN
 
 		LOOP
 
-			INSERT INTO validador.rdc20_resultado(linea, num_validador, tipo_registro, campo, dato_reportado, status)
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
 			VALUES(
 				 rec.linea
 				,rec.num_validador
+				,rec.descripcion
 				,rec.tipo_registro
 				,rec.campo
 				,rec.dato_reportado
@@ -846,7 +925,6 @@ BEGIN
 		    
 		END LOOP;		
 		
-
 		
 		EXCEPTION WHEN OTHERS THEN
 		    INSERT INTO log.log_eventos (fecha, nivel, dag, procedimiento, mensaje)
