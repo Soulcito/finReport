@@ -16,8 +16,8 @@ REPORT_DIR = "/opt/airflow/finReport/reports"
 # Cada item = (schema, tabla, out_dir, pos_nombre, largo_nombre)
 
 REPORTES = [
-    ("reporte", "rdc01_texto", REPORT_DIR, 11, 13),
-    ("reporte", "rdc20_texto", REPORT_DIR, 11, 13),
+    ("reporte", "rdc01_texto", REPORT_DIR, 10, 13),
+    ("reporte", "rdc20_texto", REPORT_DIR, 10, 13),
 ]
 
 

@@ -7,6 +7,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     dummy int;
+	v_sql text;
 BEGIN
 
 	/******************************************************/
@@ -22,16 +23,15 @@ BEGIN
     END IF;
 
     -- 2) Validar existencia del codigo en la tabla indicada
-    
-	EXECUTE format(
-        'SELECT 1 FROM %s WHERE cod = $1',
-        tabla
-    )
+
+	v_sql := format('SELECT 1 FROM %s WHERE cod = $1', tabla);
+
+	EXECUTE v_sql
     INTO dummy
     USING codigo;
 
-    IF FOUND THEN
-        RETURN 'OK';
+	IF dummy IS NOT NULL THEN
+       RETURN 'OK';
     END IF;
 
     RETURN 'NOOK';

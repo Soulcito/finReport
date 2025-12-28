@@ -42,6 +42,7 @@
 \ir /docker-entrypoint-initdb.d/procesos/8-proceso.excluir_por_morosidad.sql
 \ir /docker-entrypoint-initdb.d/procesos/9-proceso.calculo_calendario_rdc20.sql
 \ir /docker-entrypoint-initdb.d/procesos/10-proceso.genera_hist_interface.sql
+\ir /docker-entrypoint-initdb.d/procesos/11-proceso.trunca_tablas_validador.sql
 
 
 -- Ejecutar scripts de la carpeta reportes
@@ -54,16 +55,21 @@
 
 -- Ejecutar scripts de la carpeta validadores
 \echo '=== Ejecutando scripts de VALIDADORES ==='
-\ir /docker-entrypoint-initdb.d/reportes/1-schema.sql
-\ir /docker-entrypoint-initdb.d/reportes/2-rdc01.sql
-\ir /docker-entrypoint-initdb.d/reportes/3-proceso.val_num_1.sql
-\ir /docker-entrypoint-initdb.d/reportes/4-proceso.val_num_2.sql
-\ir /docker-entrypoint-initdb.d/reportes/5-proceso.val_num_3.sql
-\ir /docker-entrypoint-initdb.d/reportes/6-proceso.val_num_4.sql
-\ir /docker-entrypoint-initdb.d/reportes/7-proceso.val_codigo_tabla.sql
-\ir /docker-entrypoint-initdb.d/reportes/8-proceso.val_num_9.sql
-\ir /docker-entrypoint-initdb.d/reportes/9-proceso.val_num_10.sql
-\ir /docker-entrypoint-initdb.d/reportes/10-proceso.val_num_11.sql
-\ir /docker-entrypoint-initdb.d/reportes/11-proceso.val_en_dominio.sql
+\ir /docker-entrypoint-initdb.d/validadores/1-schema.sql
+\ir /docker-entrypoint-initdb.d/validadores/2-rdc01.sql
+\ir /docker-entrypoint-initdb.d/validadores/3-proceso.val_num_1.sql
+\ir /docker-entrypoint-initdb.d/validadores/4-proceso.val_num_2.sql
+\ir /docker-entrypoint-initdb.d/validadores/5-proceso.val_num_3.sql
+\ir /docker-entrypoint-initdb.d/validadores/6-proceso.val_num_4.sql
+\ir /docker-entrypoint-initdb.d/validadores/7-proceso.val_codigo_tabla.sql
+\ir /docker-entrypoint-initdb.d/validadores/8-proceso.val_num_9.sql
+\ir /docker-entrypoint-initdb.d/validadores/9-proceso.val_num_10.sql
+\ir /docker-entrypoint-initdb.d/validadores/10-proceso.val_num_11.sql
+\ir /docker-entrypoint-initdb.d/validadores/11-proceso.val_en_dominio.sql
+\ir /docker-entrypoint-initdb.d/validadores/12-proceso.val_reporte_rdc01.sql
+\ir /docker-entrypoint-initdb.d/validadores/13-rdc20.sql
+\ir /docker-entrypoint-initdb.d/validadores/14-proceso.val_reporte_rdc20.sql
+\ir /docker-entrypoint-initdb.d/validadores/15-proceso.val_num_16.sql
+
 
 \echo '=== Inicialización completada ==='

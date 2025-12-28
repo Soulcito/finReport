@@ -51,6 +51,7 @@ BEGIN
 		TRUNCATE TABLE interno.parametros_generales;
 		DELETE FROM interno.tipo_flujo_rel;
 		DELETE FROM interno.tipo_flujo;
+		TRUNCATE TABLE interno.calendario_rdc20;
 
         -- REPORTES
 

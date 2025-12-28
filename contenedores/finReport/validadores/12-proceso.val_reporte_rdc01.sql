@@ -53,7 +53,7 @@ BEGIN
 		SELECT 
 			 linea
 			,1        											as "num_validador"
-			,'header'											as "campo"	
+			,'header-cod_institucion'							as "campo"	
 			,substring(registro,1,10)							as "dato_reportado"
 			,proceso.val_num_1(substring(registro,1,10))	    as "status"
 		FROM validador.rdc01_texto where linea = 1;
@@ -68,10 +68,40 @@ BEGIN
 		SELECT 
 			 linea
 			,2        											as "num_validador"
-			,'header'											as "campo"
+			,'header-ident_archivo'								as "campo"
 			,substring(registro,11,5)							as "dato_reportado"
 			,proceso.val_num_2('RDC01', 11, 5, registro)		as "status"
 		FROM validador.rdc01_texto where linea = 1;
+
+
+		/*
+			9: Fecha reportada no corresponde al formato YYYYMMDD
+		*/
+		
+
+		insert into validador.rdc01_resultado(linea, num_validador, campo, dato_reportado, status)
+		SELECT 
+			 linea
+			,9        											as "num_validador"
+			,'header-fecha_archivo'								as "campo"
+			,substring(registro,16,8)							as "dato_reportado"
+			,proceso.val_num_9(substring(registro,16,8))		as "status"
+		FROM validador.rdc01_texto where linea = 1;			
+
+
+		/*
+			16: Filler debe ser completado con espacios y tener un largo especifico
+		*/
+		
+
+		insert into validador.rdc01_resultado(linea, num_validador, campo, dato_reportado, status)
+		SELECT 
+			 linea
+			,16        												as "num_validador"
+			,'header-filler'										as "campo"
+			,substring(registro, 24, 59)							as "dato_reportado"
+			,proceso.val_num_16(substring(registro, 24, 299), 299)	as "status"
+		FROM validador.rdc01_texto where linea = 1;				
 
 
 		/*
