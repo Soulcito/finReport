@@ -25,7 +25,13 @@ BEGIN
 
 	-- 3) Conversion y validacion
 	
-	cod_var := to_date(fecha, 'YYYYMMDD');
+	BEGIN
+		cod_var := to_date(fecha, 'YYYYMMDD');
+	EXCEPTION
+		WHEN OTHERS THEN
+		-- Fecha invalida
+		RETURN 'NOOK';
+	END;
 
 	if to_char(cod_var, 'YYYYMMDD') = fecha then
 		return 'OK';
