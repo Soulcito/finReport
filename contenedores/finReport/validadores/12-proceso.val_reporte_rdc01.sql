@@ -112,7 +112,7 @@ BEGIN
 			,v_descripcion											as "descripcion"
 			,'header-filler'										as "campo"
 			,substring(registro, 24, 59)							as "dato_reportado"
-			,proceso.val_num_16(substring(registro, 24, 299), 299)	as "status"
+			,proceso.val_num_16(substring(registro, 24, 59), 299)	as "status"
 		FROM validador.rdc01_texto where linea = 1;				
 
 
@@ -1034,7 +1034,348 @@ BEGIN
 				,rec.status
 			);			
 		    
-		END LOOP;				
+		END LOOP;
+
+		/*
+			17: Si se informa tipo deudor 1, el sujeto tiene mora y el monto actual = suma( monto al dia + tramos de mora de 1 a 9) entonces carga financiera tiene que estar en cero.
+			campo: Carga financiera
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 17;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,17                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'carga_financiera'														as "campo"
+				,carga_financiera														as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where tipo_deudor = '1' and 
+			(monto_mora_1_tramo::numeric + 
+			 monto_mora_2_tramo::numeric + 
+			 monto_mora_3_tramo::numeric + 
+			 monto_mora_4_tramo::numeric + 
+			 monto_mora_5_tramo::numeric + 
+			 monto_mora_6_tramo::numeric + 
+			 monto_mora_7_tramo::numeric + 
+			 monto_mora_8_tramo::numeric + 
+			 monto_mora_9_tramo::numeric) > 0
+			and 
+			   monto_actual::numeric = (
+			   							monto_al_dia::numeric + 
+			   							monto_mora_1_tramo::numeric + 
+			                            monto_mora_2_tramo::numeric + 
+										monto_mora_3_tramo::numeric + 
+										monto_mora_4_tramo::numeric + 
+										monto_mora_5_tramo::numeric + 
+										monto_mora_6_tramo::numeric + 
+										monto_mora_7_tramo::numeric + 
+										monto_mora_8_tramo::numeric + 
+										monto_mora_9_tramo::numeric)
+			and carga_financiera::numeric <> 0			
+
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;		
+
+		/*
+			18: Si se informa dato en el campo mora_actual entonces la suma de los campos de mora del 1 al 9 tiene que ser mayor a cero.
+			campo: Mora actual
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 18;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,18                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'mora_actual'															as "campo"
+				,mora_actual															as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			mora_actual::numeric <> 0 and
+			(monto_mora_1_tramo::numeric + 
+			 monto_mora_2_tramo::numeric + 
+			 monto_mora_3_tramo::numeric + 
+			 monto_mora_4_tramo::numeric + 
+			 monto_mora_5_tramo::numeric + 
+			 monto_mora_6_tramo::numeric + 
+			 monto_mora_7_tramo::numeric + 
+			 monto_mora_8_tramo::numeric + 
+			 monto_mora_9_tramo::numeric) = 0
+
+
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			19: Si la suma de los campos de mora 1 al 9 es mayor a cero, entonces el campo mora actual debe ser mayor a cero.
+			campo: Mora actual
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 19;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,19                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'mora_actual'															as "campo"
+				,mora_actual															as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			mora_actual::numeric = 0 and
+			(monto_mora_1_tramo::numeric + 
+			 monto_mora_2_tramo::numeric + 
+			 monto_mora_3_tramo::numeric + 
+			 monto_mora_4_tramo::numeric + 
+			 monto_mora_5_tramo::numeric + 
+			 monto_mora_6_tramo::numeric + 
+			 monto_mora_7_tramo::numeric + 
+			 monto_mora_8_tramo::numeric + 
+			 monto_mora_9_tramo::numeric) > 0
+
+
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			20: Si el campo deuda acelerada es igual a 1, entonces campo monto al dia tiene que ser igual a cero y la suma de los campos en mora del 1 al 9 debe ser mayor a cero.
+			campo: Deuda acelerada
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 20;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,20                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'deuda_acelerada'														as "campo"
+				,deuda_acelerada														as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			deuda_acelerada = '1' and
+			not (
+				monto_al_dia::numeric = 0 and
+					(monto_mora_1_tramo::numeric + 
+					 monto_mora_2_tramo::numeric + 
+					 monto_mora_3_tramo::numeric + 
+					 monto_mora_4_tramo::numeric + 
+					 monto_mora_5_tramo::numeric + 
+					 monto_mora_6_tramo::numeric + 
+					 monto_mora_7_tramo::numeric + 
+					 monto_mora_8_tramo::numeric + 
+					 monto_mora_9_tramo::numeric) > 0
+			)
+
+
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			21: Si el campo deuda acelerada es igual a 1, entonces el campo mora actual debe ser mayor a cero.
+			campo: Deuda acelerada
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 21;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,21                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'deuda_acelerada'														as "campo"
+				,deuda_acelerada														as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			deuda_acelerada = '1' and mora_actual::numeric = 0
+			
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			22: Si el campo deuda acelerada es igual a 1, entonces el campo de carga financiera debe ser igual a cero
+			campo: Deuda acelerada
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 22;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,22                 													as "num_validador"
+				,v_descripcion															as "descripcion"	
+				,'deuda_acelerada'														as "campo"
+				,deuda_acelerada														as "dato_reportado"
+				,'NOOK'																	as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			deuda_acelerada = '1' and
+			carga_financiera::numeric <> 0
+			
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			23: Para tipo de deudor 1, campo operacion + tipo de obligacion, deben ser unicos
+			campo: codigo_operacion + tipo_obligacion
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 23;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,23                 																		as "num_validador"
+				,v_descripcion																				as "descripcion"	
+				,'codigo_operacion + tipo_obligacion'														as "campo"
+				,'codigo_operacion: ' || codigo_operacion || ' tipo_obligacion: ' || tipo_obligacion		as "dato_reportado"
+				,'NOOK'																						as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			tipo_deudor = '1' and
+			(codigo_operacion, tipo_obligacion) in (
+				select 
+					codigo_operacion, tipo_obligacion	
+					from validador.rdc01_detalle where tipo_deudor = '1'
+					group by codigo_operacion, tipo_obligacion
+					having count(*) > 1
+			)
+			
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+		/*
+			24: Para tipo de deudor 2, campo operacion + campo rut + tipo de obligacion, deben ser unicos
+			campo: codigo_operacion + rut + tipo_obligacion
+		*/
+		
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 24;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,24                 																		as "num_validador"
+				,v_descripcion																				as "descripcion"	
+				,'codigo_operacion + rut + tipo_obligacion'													as "campo"
+				,'codigo_operacion: ' || codigo_operacion || ' rut: ' || rut  || ' tipo_obligacion: ' || tipo_obligacion		as "dato_reportado"
+				,'NOOK'																						as "status"
+		    FROM validador.rdc01_detalle 
+			where 
+			tipo_deudor = '2' and
+			(rut, codigo_operacion, tipo_obligacion) in (
+				select 
+					rut, codigo_operacion, tipo_obligacion	
+					from validador.rdc01_detalle where tipo_deudor = '2'
+					group by rut, codigo_operacion, tipo_obligacion
+					having count(*) > 1
+			)
+			
+		LOOP
+
+			INSERT INTO validador.rdc01_resultado(linea, num_validador, descripcion, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
 		
 		
 		EXCEPTION WHEN OTHERS THEN

@@ -13,7 +13,7 @@ import os
 # ==============================
 
 GROUP_NAME = "import_mantenedores_validador"
-EXCEL_DIR = "/opt/airflow/finReport/mantenedores/validador"
+EXCEL_DIR = "/opt/airflow/finReport/mantenedores"
 
 # ==============================
 # CONFIGURACIÓN DE LOGGING
