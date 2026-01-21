@@ -4,6 +4,8 @@ AS $$
 DECLARE
 	rec RECORD;
 	v_descripcion varchar(2000);
+	v_valor_1 int;
+	v_valor_2 int;
 BEGIN
 
 		/**************************************************/
@@ -280,23 +282,23 @@ BEGIN
 
 
 		/*
-			10: Campo reportado debe ser numerico y rellenado con 0 a la izquierda
+			11: Campo con signo no corresponde, signo debe ir al final
 			Campo: monto
 			Tipo_registro: 1			
 		*/
 		
-		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 10;
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 11;
 
 		FOR rec IN 
 
 			SELECT 
 				 linea
-				,10                																	as "num_validador"
+				,11                																	as "num_validador"
 				,v_descripcion																		as "descripcion"
 				,'01'																				as "tipo_registro"	
 				,'monto'																			as "campo"
 				,monto																				as "dato_reportado"
-				,proceso.val_num_10(monto)															as "status"
+				,proceso.val_num_11(monto)															as "status"
 		    FROM validador.rdc20_detalle_1
 
 		LOOP
@@ -924,6 +926,631 @@ BEGIN
 			);			
 		    
 		END LOOP;		
+
+
+		/*
+			25: Tipo de obligacion reportado igual a (07, 08, 41, 42, 43, 44) y tipo de flujo es distinto a 03
+			Campo: Tipo de obligacion
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 25;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,25	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_obligacion'																	as "campo"
+				,'Tipo obligacion: ' || tipo_obligacion	|| ', Tipo flujo: ' || tipo_flujo			as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_obligacion in ('07','08','41','42','43','44') and tipo_flujo <> '03'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;				
+
+
+		/*
+			26: Tipo de flujo informado Amortizacion de capital (01) con signo distinto de negativo(-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 26;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,26	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '01' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;						
+
+
+		/*
+			27: Tipo de flujo informado Interes capitalizado (02) con signo distinto de positivo (+)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 27;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,27	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '02' and substring(monto,21,1) <> '+'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			28: Tipo de flujo informado Venta de cartera (04) con signo distinto de negativo (-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 28;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,28	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '04' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			29: Tipo de flujo informado Compra de cartera (05) con signo distinto de positivo (+)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 29;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,29	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '05' and substring(monto,21,1) <> '+'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			30: Tipo de flujo informado Cesion de credito del reportante a otra entidad (06) con signo distinto de negativo (-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 30;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,30	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '06' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;		
+
+
+		/*
+			31: Tipo de flujo informado Cesion de credito adquirido por el reportante (07) con signo distinto de positivo (+)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 31;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,31	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '07' and substring(monto,21,1) <> '+'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			32: Tipo de flujo informado Prescripcion sentenciada por Tribunal diferentes a un procedimiento concursal de liquidacion (08) con signo distinto a negativo (-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 32;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,32	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '08' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			33: Tipo de flujo informado Exclusion por obligacion reportable que cumple cinco años en morosidad (09) con signo distinto a negativo (-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 33;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,33	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '09' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			34: Tipo de flujo informado Liquidacion de la obligacion por Procedimiento Concursal de liquidacion (10) con signo distinto de negativo (-)
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 34;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,34	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'01'																				as "tipo_registro"	
+				,'tipo_flujo'																		as "campo"
+				,monto																				as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_1
+				 WHERE tipo_flujo = '10' and substring(monto,21,1) <> '-'
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			35: Se informa tipo de flujo 08 y/o 10 en el registro 01 y no existe tipo de registro 02 informado
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 35;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('08','10');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_2;
+
+		IF v_valor_1 > 0 and v_valor_2 = 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,35	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'01'																				as "tipo_registro"	
+					,'tipo_flujo'																		as "campo"
+					,'Monto reportado: ' || monto														as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_1
+					 WHERE tipo_flujo in ('08','10')
+	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;
+
+
+		/*
+			36: Se informa tipo de registro 02 y no existen flujos 08 y/o 10 en el registro 01
+			Campo: Tipo de flujo
+			Tipo_registro: 2
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 36;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('08','10');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_2;
+
+		IF v_valor_1 = 0 and v_valor_2 > 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,36	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'02'																				as "tipo_registro"	
+					,'tipo_registro'																	as "campo"
+					,'Codigo operacion: ' || codigo_operacion											as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_2
+					 	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;		
+
+
+		/*
+			37: Se informa tipo de flujo 04 y/o 06 en el registro 01 y no existe tipo de registro 03 informado
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 37;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('04','06');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_3;
+
+		IF v_valor_1 > 0 and v_valor_2 = 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,37	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'01'																				as "tipo_registro"	
+					,'tipo_flujo'																		as "campo"
+					,'Monto reportado: ' || monto														as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_1
+					 WHERE tipo_flujo in ('04','06')
+	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;
+
+
+		/*
+			38: Se informa tipo de registro 03 y no existen flujos 04 y/o 06 en el registro 01
+			Campo: Tipo de flujo
+			Tipo_registro: 3
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 38;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('04','06');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_3;
+
+		IF v_valor_1 = 0 and v_valor_2 > 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,38	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'03'																				as "tipo_registro"	
+					,'tipo_registro'																	as "campo"
+					,'Codigo operacion: ' || codigo_operacion											as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_3
+					 	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;		
+
+
+		/*
+			39: Se informa tipo de flujo 05 y/o 07 en el registro 01 y no existe tipo de registro 04 informado
+			Campo: Tipo de flujo
+			Tipo_registro: 1
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 39;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('05','07');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_4;
+
+		IF v_valor_1 > 0 and v_valor_2 = 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,39	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'01'																				as "tipo_registro"	
+					,'tipo_flujo'																		as "campo"
+					,'Monto reportado: ' || monto														as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_1
+					 WHERE tipo_flujo in ('05','07')
+	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;		
+
+
+		/*
+			40: Se informa tipo de registro 04 y no existen flujos 05 y/o 07 en el registro 01
+			Campo: Tipo de flujo
+			Tipo_registro: 4
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 40;
+		select count(1) into v_valor_1 from validador.rdc20_detalle_1 where tipo_flujo in ('05','07');
+		select count(1) into v_valor_2 from validador.rdc20_detalle_4;
+
+		IF v_valor_1 = 0 and v_valor_2 > 0 THEN
+
+			FOR rec IN 
+	
+				SELECT 
+					 linea
+					,40	                																as "num_validador"
+					,v_descripcion																		as "descripcion"
+					,'04'																				as "tipo_registro"	
+					,'tipo_registro'																	as "campo"
+					,'Codigo operacion: ' || codigo_operacion											as "dato_reportado"
+					,'NOOK'																				as "status"
+			    FROM validador.rdc20_detalle_4
+					 	
+			LOOP
+	
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 rec.linea
+					,rec.num_validador
+					,rec.descripcion
+					,rec.tipo_registro
+					,rec.campo
+					,rec.dato_reportado
+					,rec.status
+				);			
+			    
+			END LOOP;		
+
+		END IF;		
 		
 		
 		EXCEPTION WHEN OTHERS THEN
