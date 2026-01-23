@@ -281,7 +281,7 @@ BEGIN
 			   from (
 						select 
 						    cod_operacion
-						   ,(capital - capital_pagado + interes_por_pagar + interes_moroso - interes_pagado) as "monto_origen"
+						   ,(capital - capital_pagado + interes_devengado + interes_moroso - interes_pagado) as "monto_origen"
 						   ,(otros - otros_pagado)                                                           as "otros"
 						    from interface.cuadro_operaciones  
 					) as BASE   inner join interface.cartera_operaciones b on BASE.cod_operacion = b.cod_operacion
