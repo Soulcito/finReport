@@ -38,9 +38,9 @@ BEGIN
 		
 		-- | Determina fecha de proceso | --		
 
-		select TO_CHAR(max(fecha_proceso), 'YYYYMMDD')::VARCHAR
+		select valor
 		into fecha_archivo
-		from interface.cartera_operaciones;
+		from interno.parametros_generales where cod = '3';
 
 		RAISE NOTICE 'Fecha de proceso para RDC20: %', fecha_archivo;
 

@@ -14,9 +14,9 @@ BEGIN
 
 		-- | Determina fecha de proceso | --		
 
-		select max(fecha_proceso)
+		select valor::date
 		into fecha_archivo
-		from interface.cartera_operaciones;
+		from interno.parametros_generales where cod = '3';
 
 		-- | Calculo 5 años de morosidad en dias | --				
 

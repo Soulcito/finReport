@@ -98,11 +98,30 @@ def load_interfaz(**context):
     tabla = "interfaz"
     tabla_rel = "interfaz_rel"
 
+    # Obtener fecha de proceso desde parametros_generales (cod='3')
+    try:
+        df_param = consulta_sql(schema, "parametros_generales", "cod = '3'")
+        if df_param.empty:
+            logger.error("No existe parametro interno.parametros_generales con cod='3'")
+            return
+        fecha_proceso = str(df_param.iloc[0]["valor"]).strip()
+        if not fecha_proceso:
+            logger.error("El parametro cod='3' no tiene valor de fecha_proceso")
+            return
+        logger.info(f"Fecha de proceso obtenida: {fecha_proceso}")
+    except Exception as e:
+        logger.error(f"Error obteniendo fecha de proceso desde interno.parametros_generales: {e}")
+        return
+
     logger.info(f"Buscando archivos .txt en {INTERFACE_DIR}")
-    files = [f for f in os.listdir(INTERFACE_DIR) if f.lower().endswith('.txt')]
+    all_files = [f for f in os.listdir(INTERFACE_DIR) if f.lower().endswith('.txt')]
+
+    # Filtrar por fecha de proceso contenida en el nombre del archivo
+    files = [f for f in all_files if fecha_proceso in f]
+    logger.info(f"Archivos que entrarán al loop (files): {files}")
 
     if not files:
-        logger.warning(f"No se encontraron archivos .txt en {INTERFACE_DIR}")
+        logger.warning(f"No se encontraron archivos .txt en {INTERFACE_DIR} que contengan fecha {fecha_proceso}")
         return
 
     for file in files:
@@ -199,6 +218,16 @@ def load_interfaz(**context):
         except Exception as e:
             logger.error(f"Error inesperado procesando archivo {file}: {e}")
             continue
+        
+        finally:        
+       
+            # Borrar archivo una vez importado correctamente
+            try:
+                logger.info(f"Intentando eliminar: {file_path}")
+                os.remove(file_path)
+                logger.info(f"Archivo eliminado post-import: {file}")
+            except Exception as e:
+                logger.error(f"No se pudo eliminar el archivo {file}: {e}")
 
 
 # ==============================
