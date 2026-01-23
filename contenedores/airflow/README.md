@@ -72,7 +72,9 @@ Por lo tanto, la institucion deberia modificar el excel de esta manera:
 
 Este excel es usado como parametria del sistema, en el se encuentran reservados los codigos 1 y 2 que son usados para identificar el codigo de institucion y el codigo de moneda UF respectivamente, el primer codigo es el que da la CMF a cada institucion y el segundo codigo es el codigo de moneda interno que usa la institucion para identificar la moneda UF.
 
-Estos dos valores, deberian ser cambiados por cada institucion.
+El codigo 3 representa la fecha de proceso en formato YYYYMMDD, este dato se debe cambiar antes de procesar REDEC, de acuerdo a este parametro el sistema buscara solo las interfaces que tengan esta fecha de proceso en el nombre, como por ejemplo A0120251107.TXT
+
+Estos tres valores, deberian ser cambiados por cada institucion.
 
 <p align="center">
   <img src="imagenes\image-3.png" alt="alt text" width="400">
