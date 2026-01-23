@@ -111,8 +111,8 @@ BEGIN
 			,16        												as "num_validador"
 			,v_descripcion											as "descripcion"
 			,'header-filler'										as "campo"
-			,substring(registro, 24, 59)							as "dato_reportado"
-			,proceso.val_num_16(substring(registro, 24, 59), 299)	as "status"
+			,substring(registro, 24, 299)							as "dato_reportado"
+			,proceso.val_num_16(substring(registro, 24, 299), 299)	as "status"
 		FROM validador.rdc01_texto where linea = 1;				
 
 
@@ -1037,7 +1037,7 @@ BEGIN
 		END LOOP;
 
 		/*
-			17: Si se informa tipo deudor 1, el sujeto tiene mora y el monto actual = suma( monto al dia + tramos de mora de 1 a 9) entonces carga financiera tiene que estar en cero.
+			17: Si se informa tipo deudor 1, el sujeto esta 100% moroso y el monto actual = suma( tramos de mora de 1 a 9) entonces carga financiera tiene que estar en cero.
 			campo: Carga financiera
 		*/
 		
@@ -1065,7 +1065,6 @@ BEGIN
 			 monto_mora_9_tramo::numeric) > 0
 			and 
 			   monto_actual::numeric = (
-			   							monto_al_dia::numeric + 
 			   							monto_mora_1_tramo::numeric + 
 			                            monto_mora_2_tramo::numeric + 
 										monto_mora_3_tramo::numeric + 
