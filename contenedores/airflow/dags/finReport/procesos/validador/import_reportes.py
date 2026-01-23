@@ -76,6 +76,16 @@ def load_txt_files(**context):
                 logger.info(f"{len(data)} registros insertados en {full_name}")
             else:
                 logger.warning(f"El archivo {file} está vacío")
+                
+                
+            # Borrar reporte una vez importado
+            try:
+                logger.info(f"Intentando eliminar reporte: {file_path}")
+                os.remove(file_path)
+                logger.info(f"Reporte eliminado post-import: {file}")
+            except Exception as e:
+                logger.error(f"No se pudo eliminar el reporte {file}: {e}")                
+                
 
     except Exception as e:
         conn.rollback()
