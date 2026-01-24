@@ -42,7 +42,7 @@ CREATE TABLE reporte.rdc20_detalle_1 (
     ,tipo_obligacion			int not null
 	,tipo_flujo					int not null
 	,monto						numeric(20) not null
-	,cod_operacion              varchar(30) not null
+	,codigo_operacion           varchar(30) not null
 	,rut						varchar(10) not null	
 	,cod_tipo_obligacion		varchar(50) not null
 ); 
