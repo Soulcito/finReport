@@ -2,13 +2,14 @@ CREATE OR REPLACE PROCEDURE proceso.genera_rdc20()
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	rec RECORD;
 	fecha_archivo varchar(8);
 	fecha_anterior varchar(8);
 	codigo_institucion varchar(10);
 	var_valor numeric(20);
 	val int;
 	cod_uf varchar(50);
+	fecha_archivo_dt date;
+	fecha_anterior_dt date;
 	
 BEGIN
 	BEGIN
@@ -16,6 +17,15 @@ BEGIN
 		/*
 			Proceso de generacion de RDC20
 		*/
+
+
+		-- | Determina fecha de proceso | --		
+
+		select valor
+		into fecha_archivo
+		from interno.parametros_generales where cod = '3';
+
+		RAISE NOTICE 'Fecha de proceso para RDC20: %', fecha_archivo;
 
 		-- | Trunca tablas de uso en el procedimiento | --		
 
@@ -36,15 +46,7 @@ BEGIN
 		delete from reporte.rdc20_hist_4 where fecha_proceso = fecha_archivo;
 
 		
-		-- | Determina fecha de proceso | --		
-
-		select valor
-		into fecha_archivo
-		from interno.parametros_generales where cod = '3';
-
-		RAISE NOTICE 'Fecha de proceso para RDC20: %', fecha_archivo;
-
-		
+	
 		-- | Determina codigo de la institucion | --		
 
 		select LPAD(valor,10,'0')
@@ -91,12 +93,17 @@ BEGIN
 				select max(fecha)
 				into fecha_anterior
 				from interno.calendario_rdc20 where fecha < fecha_archivo;
+
+
+				fecha_archivo_dt := to_date(fecha_archivo, 'YYYYMMDD');
+				fecha_anterior_dt := to_date(fecha_anterior, 'YYYYMMDD');
+				
 		
 		-- | Determinacion de flujo 01 Amortizaciones de capitales cuando hay pagos y los creditos existen en ambos periodos | --
 
-	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, cod_operacion, rut, cod_tipo_obligacion)
+	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, codigo_operacion, rut, cod_tipo_obligacion)
 			 select 
-			   fecha_archivo::date          						as "fecha_proceso"
+			   fecha_archivo_dt										as "fecha_proceso"
 			  ,1   													as "tipo_registro"
 			  ,tipo_obligacion
 			  ,1													as "tipo_flujo"
@@ -125,7 +132,7 @@ BEGIN
 					select 
 					    cod_operacion
 					   ,sum(capital - capital_pagado) as "capital"
-					   from interface.cuadro_operaciones_hist where fecha_proceso = fecha_anterior::date
+					   from historico.cuadro_operaciones where fecha_proceso = fecha_anterior_dt
 					   group by cod_operacion
 				  ) b on a.cod_operacion = b.cod_operacion
 				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
@@ -134,9 +141,9 @@ BEGIN
 
 		-- | Determinacion de flujo 02 Interes capitalizado | --
 
-	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, cod_operacion, rut, cod_tipo_obligacion)
+	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, codigo_operacion, rut, cod_tipo_obligacion)
 			 select 
-			   fecha_archivo::date          						as "fecha_proceso"
+			   fecha_archivo_dt					          			as "fecha_proceso"
 			  ,1   													as "tipo_registro"
 			  ,tipo_obligacion
 			  ,2													as "tipo_flujo"
@@ -165,7 +172,7 @@ BEGIN
 					select 
 					    cod_operacion
 					   ,sum(capital - capital_pagado) as "capital"
-					   from interface.cuadro_operaciones_hist where fecha_proceso = fecha_anterior::date
+					   from historico.cuadro_operaciones where fecha_proceso = fecha_anterior_dt
 					   group by cod_operacion
 				  ) b on a.cod_operacion = b.cod_operacion
 				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
@@ -175,9 +182,9 @@ BEGIN
 
 		-- | Determinacion de flujo 02 Interes capitalizado por reajustes, esto esta en las preguntas y respuestas de la CMF | --
 
-	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, cod_operacion, rut, cod_tipo_obligacion)
+	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, codigo_operacion, rut, cod_tipo_obligacion)
 			 select 
-			   fecha_archivo::date          										as "fecha_proceso"
+			   fecha_archivo_dt					          							as "fecha_proceso"
 			  ,1   																	as "tipo_registro"
 			  ,tipo_obligacion
 			  ,2																	as "tipo_flujo"
@@ -207,12 +214,12 @@ BEGIN
 					    a.cod_operacion
 					   ,sum(a.capital - a.capital_pagado) as "capital"
 					   from historico.cuadro_operaciones a inner join historico.cartera_operaciones b on a.cod_operacion = b.cod_operacion and a.fecha_proceso = b.fecha_proceso
-					   where a.fecha_proceso = fecha_anterior::date
+					   where a.fecha_proceso = fecha_anterior_dt
 					     and b.cod_moneda = cod_uf
 					   group by a.cod_operacion
 				  ) b on a.cod_operacion = b.cod_operacion
 				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
-					inner join (select *from historico.tipo_cambio where fecha_proceso = fecha_anterior::date) d on a.cod_moneda = d.cod_moneda
+					inner join (select *from historico.tipo_cambio where fecha_proceso = fecha_anterior_dt) d on a.cod_moneda = d.cod_moneda
 				  where a.capital = b.capital;				  
 
 
@@ -220,20 +227,20 @@ BEGIN
 		-- | Primero se considera que todos son nuevos (Flujo 03), luego se chequea en interface variacion_stock | --
 
 		
-	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, cod_operacion, rut, cod_tipo_obligacion)
+	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, codigo_operacion, rut, cod_tipo_obligacion)
 			 select 
-			   fecha_archivo::date          										as "fecha_proceso"
+			   fecha_archivo_dt					          							as "fecha_proceso"
 			  ,1   																	as "tipo_registro"
 			  ,tipo_obligacion
 			  ,3																	as "tipo_flujo"
-			  ,(a.monto_actual  * c.valor)::numeric(20)								as "monto"
-			  ,a.cod_operacion
+			  ,a.monto_actual::numeric(20)											as "monto"
+			  ,a.codigo_operacion
 			  ,rut
 			  ,tipo_obligacion_interfaz												as "cod_tipo_obligacion"
 			  from 
 	              (
 					select 
-					    cod_operacion
+					    codigo_operacion
 					   ,tipo_obligacion
 					   ,rut
 					   ,tipo_obligacion_interfaz
@@ -248,17 +255,17 @@ BEGIN
 					   from reporte.rdc01_hist
 					   where fecha_proceso = fecha_anterior
 					   and tipo_deudor = 1
-				  ) b on a.cod_operacion = b.codigo_operacion
-				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
+				  ) b on a.codigo_operacion = b.codigo_operacion
 					where b.codigo_operacion is null;
 
 
 		-- | Determinacion de flujo 05 y 07 Compra de carteras y Cesion de creditos adquiridos | --	
 
 		update reporte.rdc20_detalle_1 as a
-			set a.tipo_flujo = c.cod_flujo::int
+			set tipo_flujo = c.cod_flujo::int
 		from historico.variacion_stock as b inner join interno.tipo_flujo_rel as c on b.tipo_flujo = c.cod_entidad
-		where b.fecha_proceso >= fecha_anterior::date and b.fecha_proceso <= fecha_archivo::date
+		where b.fecha_proceso >= fecha_anterior_dt and b.fecha_proceso <= fecha_archivo_dt
+		  and a.codigo_operacion = 	b.cod_operacion
 		  and c.cod_flujo in ('05','07');
 
 
@@ -266,13 +273,13 @@ BEGIN
 		-- | Primero se considera todos los creditos que desaparecen como creditos que se pagaron, despues se veran si son ventas de cartera, etc | --
 
 		
-	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, cod_operacion, rut, cod_tipo_obligacion)
+	         insert into reporte.rdc20_detalle_1 (fecha_proceso, tipo_registro, tipo_obligacion, tipo_flujo, monto, codigo_operacion, rut, cod_tipo_obligacion)
 			 select 
-			   fecha_archivo::date          										as "fecha_proceso"
-			  ,1   																as "tipo_registro"
+			   fecha_archivo_dt					          							as "fecha_proceso"
+			  ,1   																	as "tipo_registro"
 			  ,tipo_obligacion
 			  ,1																	as "tipo_flujo"
-			  ,(a.monto_actual  * c.valor)::numeric(20) * -1						as "monto"
+			  ,a.monto_actual::numeric(20) * -1										as "monto"
 			  ,a.cod_operacion
 			  ,rut
 			  ,tipo_obligacion_interfaz												as "cod_tipo_obligacion"
@@ -286,7 +293,7 @@ BEGIN
 					   ,cod_moneda
 					   ,monto_actual
 					   from reporte.rdc01_hist a inner join historico.cartera_operaciones b on a.codigo_operacion = b.cod_operacion
-					   where tipo_deudor = 1 and fecha_proceso = fecha_anterior
+					   where tipo_deudor = 1 and a.fecha_proceso = fecha_anterior
 				  ) a left join 
 				  (
 					select 
@@ -294,7 +301,6 @@ BEGIN
 					   from reporte.rdc01_detalle 
 					   where tipo_deudor = 1
 				  ) b on a.cod_operacion = b.codigo_operacion
-				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
 					where b.codigo_operacion is null;
 
 
@@ -302,18 +308,20 @@ BEGIN
 		-- | Determinacion de flujo 08 y 10  | --	
 
 		update reporte.rdc20_detalle_1 as a
-			set a.tipo_flujo = c.cod_flujo::int
+			set tipo_flujo = c.cod_flujo::int
 		from historico.variacion_stock as b inner join interno.tipo_flujo_rel as c on b.tipo_flujo = c.cod_entidad
-		where b.fecha_proceso >= fecha_anterior::date and b.fecha_proceso <= fecha_archivo::date
+		where b.fecha_proceso >= fecha_anterior_dt and b.fecha_proceso <= fecha_archivo_dt
+		 and a.codigo_operacion = b.cod_operacion	
 		  and c.cod_flujo in ('04','06','08','10');
 
 
 		-- | Determinacion de flujo 09, Exclusion por mora que cumplieron 5 o mas años  | --	
 
 		update reporte.rdc20_detalle_1 as a
-			set a.tipo_flujo = 9
+			set tipo_flujo = 9
 		from interno.exclusion_morosidad as b
-		where b.fecha_exclusion >= fecha_anterior::date and b.fecha_exclusion <= fecha_archivo::date;	
+		where b.fecha_exclusion >= fecha_anterior_dt and b.fecha_exclusion <= fecha_archivo_dt
+		      and a.codigo_operacion = b.cod_operacion;	
 		
 
 		-- | GENERA REGISTRO 2 | --	
@@ -332,10 +340,10 @@ BEGIN
 			,a.cod_tipo_obligacion
 		from reporte.rdc20_detalle_1 a inner join reporte.rdc01_hist b on a.codigo_operacion = b.codigo_operacion
 									   inner join historico.variacion_stock c on a.codigo_operacion = c.cod_operacion
-		where tipo_flujo in (8,10)
+		where a.tipo_flujo in (8,10)
 		  and b.tipo_deudor = 1
 		  and b.fecha_proceso = fecha_anterior
-		  and c.fecha_proceso >= fecha_anterior::date and c.fecha_proceso <= fecha_archivo::date;
+		  and c.fecha_proceso >= fecha_anterior_dt and c.fecha_proceso <= fecha_archivo_dt;
 
 
 
@@ -355,10 +363,10 @@ BEGIN
 			,a.cod_tipo_obligacion
 		from reporte.rdc20_detalle_1 a inner join reporte.rdc01_hist b on a.codigo_operacion = b.codigo_operacion
 									   inner join historico.variacion_stock c on a.codigo_operacion = c.cod_operacion
-		where tipo_flujo in (4,6)
+		where a.tipo_flujo in (4,6)
 		  and b.tipo_deudor = 1
 		  and b.fecha_proceso = fecha_anterior
-		  and c.fecha_proceso >= fecha_anterior::date and c.fecha_proceso <= fecha_archivo::date;
+		  and c.fecha_proceso >= fecha_anterior_dt and c.fecha_proceso <= fecha_archivo_dt;
 
 
 
@@ -378,9 +386,9 @@ BEGIN
 			,a.cod_tipo_obligacion
 		from reporte.rdc20_detalle_1 a inner join reporte.rdc01_detalle b on a.codigo_operacion = b.codigo_operacion
 									   inner join historico.variacion_stock c on a.codigo_operacion = c.cod_operacion
-		where tipo_flujo in (5,7)
+		where a.tipo_flujo in (5,7)
 		  and b.tipo_deudor = 1
-		  and c.fecha_proceso >= fecha_anterior::date and c.fecha_proceso <= fecha_archivo::date;
+		  and c.fecha_proceso >= fecha_anterior_dt and c.fecha_proceso <= fecha_archivo_dt;
 		  
 
 
@@ -501,8 +509,8 @@ BEGIN
 			LPAD(tipo_registro::varchar,2,'0') ||
 			LPAD(tipo_obligacion::varchar,2,'0') ||
 			LPAD(tipo_flujo::varchar,2,'0') ||
-			LPAD(monto::varchar,20,'0') ||
-			case when monto <= 0 then '-' else '+' end
+			LPAD(abs(monto)::varchar,20,'0') ||
+			case when monto < 0 then '-' else '+' end
 			,82,' ')														as "registro"
 		from reporte.rdc20_final_1
 		

@@ -2,7 +2,6 @@ CREATE OR REPLACE PROCEDURE proceso.calculo_calendario_rdc20()
 LANGUAGE plpgsql
 AS $$
 DECLARE
-	rec RECORD;
 	fecha_archivo date;	
 	var_fecha date;
 	fin_mes	date;
