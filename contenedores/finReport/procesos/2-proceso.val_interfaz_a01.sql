@@ -3,9 +3,16 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	rec RECORD;
+	v_fecha date;
 	
 BEGIN
 	BEGIN
+
+		/* Obtencion de fecha de proceso */
+
+		select to_date(valor,'YYYYMMDD')
+		into v_fecha
+		from interno.parametros_generales where cod = '3';
 
 		/*
 			A01-00001: Validacion de campo cod_persona si existe en la tabla relacion interno.tipo_persona_rel
@@ -175,7 +182,7 @@ BEGIN
 				,rec.causal_rectificacion
 				,rec.numero_solicitud
 				,rec.valor_contable
-				,'A01-00005; Operacion no existe en la interfaz interface.cuadro_operaciones'
+				,'A01-00005; cod_operacion: Operacion no existe en la interfaz interface.cuadro_operaciones'
 			);			
 		    
 		END LOOP;		
@@ -224,7 +231,7 @@ BEGIN
 				,rec.causal_rectificacion
 				,rec.numero_solicitud
 				,rec.valor_contable
-				,'A01-00006; Operacion se encuentra informada en la interfaz mas de una ves'
+				,'A01-00006; cod_operacion: Operacion se encuentra informada en la interfaz mas de una ves'
 			);		
 
 		END LOOP;					
@@ -267,10 +274,54 @@ BEGIN
 				,rec.causal_rectificacion
 				,rec.numero_solicitud
 				,rec.valor_contable
-				,'A01-00007; La fecha de otorgamiento es posterior a la fecha de proceso'
+				,'A01-00007; fecha_otorgamiento: La fecha de otorgamiento es posterior a la fecha de proceso'
 			);		
 
-		END LOOP;							
+		END LOOP;
+
+
+		/*
+			A01-00008: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales
+		*/		
+
+
+		FOR rec IN 
+
+			SELECT a.*
+		    FROM interface.cartera_operaciones a
+		    WHERE a.fecha_proceso <> v_fecha
+			   
+		
+		LOOP
+
+			INSERT INTO log.cartera_operaciones (fecha_proceso, rut, cod_persona, cod_operacion, cod_titulo_3, cod_tipo_obligacion, fecha_otorgamiento, carga_financiera, fecha_extincion, monto_original, capital, interes, otros, cod_moneda, fecha_aceleracion, deuda_renegociada, operacion_desfasada, fecha_a_rectificar, fecha_rectificacion, causal_rectificacion, numero_solicitud, valor_contable, problema)
+			VALUES(
+				 rec.fecha_proceso
+				,rec.rut
+				,rec.cod_persona
+				,rec.cod_operacion
+				,rec.cod_titulo_3
+				,rec.cod_tipo_obligacion
+				,rec.fecha_otorgamiento
+				,rec.carga_financiera
+				,rec.fecha_extincion
+				,rec.monto_original
+				,rec.capital
+				,rec.interes
+				,rec.otros
+				,rec.cod_moneda
+				,rec.fecha_aceleracion
+				,rec.deuda_renegociada
+				,rec.operacion_desfasada
+				,rec.fecha_a_rectificar
+				,rec.fecha_rectificacion
+				,rec.causal_rectificacion
+				,rec.numero_solicitud
+				,rec.valor_contable
+				,'A01-00008; fecha_proceso: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales'
+			);		
+
+		END LOOP;		
 		
 		
 	EXCEPTION WHEN OTHERS THEN

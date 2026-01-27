@@ -3,12 +3,19 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	rec RECORD;
+	v_fecha date;
 	
 BEGIN
 	BEGIN
 
+		/* Obtencion de fecha de proceso */
+
+		select to_date(valor,'YYYYMMDD')
+		into v_fecha
+		from interno.parametros_generales where cod = '3';
+
 		/*
-			validacion de codigo de moneda no vengan duplicadas en la interfaz tipo de cambio
+			C01-00001: Verifica que el codigo de moneda no venga duplicado en la interfaz tipo_cambio
 		*/
 
 		FOR rec IN 
@@ -29,10 +36,33 @@ BEGIN
 				 rec.fecha_proceso
 				,rec.cod_moneda
 				,rec.valor
-				,'C01-00001; cod_moneda: Codigo de moneda viene mas de una ves en la interfaz'
+				,'C01-00001; cod_moneda: Verifica que el codigo de moneda no venga duplicado en la interfaz tipo_cambio'
 			);
 
 		END LOOP;
+
+
+		/*
+			C01-00002: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales
+		*/
+
+		FOR rec IN 
+
+			SELECT a.*
+		    FROM interface.tipo_cambio a 
+			WHERE a.fecha_proceso <> v_fecha	
+		
+		LOOP
+
+			INSERT INTO log.tipo_cambio (fecha_proceso, cod_moneda, valor, problema)
+			VALUES(
+				 rec.fecha_proceso
+				,rec.cod_moneda
+				,rec.valor
+				,'C01-00002; fecha_proceso: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales'
+			);
+
+		END LOOP;		
 	
 		
 	EXCEPTION WHEN OTHERS THEN

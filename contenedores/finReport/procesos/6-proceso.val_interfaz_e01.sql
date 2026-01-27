@@ -3,9 +3,17 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
 	rec RECORD;
+	v_fecha date;
 	
 BEGIN
 	BEGIN
+
+
+		/* Obtencion de fecha de proceso */
+
+		select to_date(valor,'YYYYMMDD')
+		into v_fecha
+		from interno.parametros_generales where cod = '3';
 
 		/*
 			E01-00001: Validacion de campo cod_persona si existe en la tabla relacion interno.tipo_persona_rel
@@ -183,6 +191,40 @@ BEGIN
 			);
 
 		END LOOP;				
+
+
+		/*
+			E01-00006: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales
+		*/
+
+		FOR rec IN 
+
+			SELECT a.*
+		    FROM interface.cartera_garantias a
+			WHERE a.fecha_proceso <> v_fecha
+		
+		LOOP
+
+			INSERT INTO log.cartera_garantias (fecha_proceso, id_garantia, rut_garante, cod_persona, cod_operacion, fecha_otorgamiento, gar_real_inmobiliaria, porc_real_inmobiliaria, gar_real_mobiliaria, porc_real_mobiliaria, gar_financiera, porc_financiera, gar_personal, porc_personal, problema)
+			VALUES(
+				 rec.fecha_proceso
+				,rec.id_garantia
+				,rec.rut_garante
+				,rec.cod_persona
+				,rec.cod_operacion
+				,rec.fecha_otorgamiento
+				,rec.gar_real_inmobiliaria
+				,rec.porc_real_inmobiliaria
+				,rec.gar_real_mobiliaria
+				,rec.porc_real_mobiliaria
+				,rec.gar_financiera
+				,rec.porc_financiera
+				,rec.gar_personal
+				,rec.porc_personal
+				,'E01-00006; fecha_proceso: Valida que las fecha de proceso que se informa en la interfaz, correspondan a la que estan parametrizadas en parametros generales'
+			);
+
+		END LOOP;						
 	
 		
 	EXCEPTION WHEN OTHERS THEN

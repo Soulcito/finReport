@@ -15,7 +15,7 @@ BEGIN
 
 		-- | Determina fecha de proceso | --		
 
-		select valor::date
+		select to_date(valor,'YYYYMMDD')
 		into fecha_archivo
 		from interno.parametros_generales where cod = '3';
 

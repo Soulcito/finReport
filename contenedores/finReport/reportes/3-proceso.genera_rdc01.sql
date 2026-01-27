@@ -6,6 +6,7 @@ DECLARE
 	fecha_archivo varchar(8);
 	codigo_institucion varchar(10);
 	var_valor numeric(15);
+	v_fecha date;
 	
 BEGIN
 	BEGIN
@@ -13,6 +14,7 @@ BEGIN
 		/*
 			Proceso de generacion de RDC01
 		*/
+
 
 		-- | Trunca tablas de uso en el procedimiento | --		
 
@@ -28,6 +30,8 @@ BEGIN
 		select valor
 		into fecha_archivo
 		from interno.parametros_generales where cod = '3';
+
+		v_fecha := to_date(fecha_archivo, 'YYYYMMDD');
 
 		RAISE NOTICE 'Fecha de proceso para RDC01: %', fecha_archivo;
 
@@ -90,7 +94,8 @@ BEGIN
 		FROM interface.cartera_operaciones  a inner join interno.tipo_persona_rel b     on a.cod_persona = b.cod_entidad
 											  inner join interno.operacion_titulo_rel c on a.cod_titulo_3 = c.cod_entidad
 											  inner join interno.tabla_banco_126_rel e  on a.cod_tipo_obligacion = e.cod_entidad
-											  inner join interface.tipo_cambio f        on a.cod_moneda = f.cod_moneda and a.fecha_proceso = f.fecha_proceso;
+											  inner join interface.tipo_cambio f        on a.cod_moneda = f.cod_moneda and a.fecha_proceso = f.fecha_proceso
+			 where a.fecha_proceso = v_fecha;
 		   
 		-- | Actualiza carga financiera para creditos desde el cuadro de pago | --
 		-- | Que pasa con creditos acelerados, este campo no tiene sentido, deberia ser cero .....? | --
@@ -103,7 +108,8 @@ BEGIN
 		  and a.cod_moneda = c.cod_moneda
           and a.tipo_obligacion::INTEGER not in (7,8,41,42,43,44)
 		  and extract(year from a.fecha_proceso) = extract(year from b.fecha_cuota)
-		  and extract(month from a.fecha_proceso) = extract(month from b.fecha_cuota);
+		  and extract(month from a.fecha_proceso) = extract(month from b.fecha_cuota)
+		  and b.fecha_proceso = v_fecha;
 
 
 		-- | Actualiza monto original para creditos 31,32,33 desde el cuadro de pago | --
@@ -130,11 +136,13 @@ BEGIN
 														  ,sum(interes_pagado) 		as "interes_pagado"
 														  ,sum(otros_pagado) 		as "otros_pagado"
 													    from interface.cuadro_operaciones
+														where fecha_proceso = v_fecha
 													    group by cod_operacion
 												   ) as b on a.codigo_operacion = b.cod_operacion
 				                                 inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
 		  		       where 
 		                  a.tipo_obligacion::INTEGER in (31,32,33)
+						  and c.fecha_proceso = v_fecha
 				   
               ) as BASE 
 			  where a.codigo_operacion = BASE.codigo_operacion;
@@ -180,9 +188,12 @@ BEGIN
 						   ,(otros - otros_pagado)                                                           as "otros"
 						    from interface.cuadro_operaciones  
 							     where fecha_cuota <= fecha_proceso
+								 and fecha_proceso = v_fecha
 					) as BASE   inner join interface.cartera_operaciones b on BASE.cod_operacion = b.cod_operacion
 					            inner join interface.tipo_cambio c         on b.cod_moneda = c.cod_moneda
 					  where to_char(b.fecha_aceleracion,'YYYYMMDD')::VARCHAR = '19000101'
+					  and b.fecha_proceso = v_fecha
+					  and c.fecha_proceso = v_fecha
 					group by BASE.cod_operacion, tramo, c.valor
 				) AS GBASE 
 				where a.codigo_operacion = GBASE.cod_operacion;
@@ -249,10 +260,13 @@ BEGIN
 							 end  as "tramo"							  
 						   ,(a.capital - a.capital_pagado + a.interes_por_pagar + a.interes_moroso - a.interes_pagado) as "mora_moneda_origen"
 						   ,(a.otros - a.otros_pagado)                                                                 as "otros"
-						   from interface.cuadro_operaciones a inner join interface.cartera_operaciones b on a.cod_operacion = b.cod_operacion
+						   from interface.cuadro_operaciones a inner join interface.cartera_operaciones b on a.cod_operacion = b.cod_operacion and a.fecha_proceso = b.fecha_proceso
+						   where a.fecha_proceso = v_fecha
 					) as BASE   inner join interface.cartera_operaciones b on BASE.cod_operacion = b.cod_operacion
 					            inner join interface.tipo_cambio c         on b.cod_moneda = c.cod_moneda
 					  where to_char(b.fecha_aceleracion,'YYYYMMDD')::VARCHAR <> '19000101'
+					  and b.fecha_proceso = v_fecha
+					  and c.fecha_proceso = v_fecha
 					group by BASE.cod_operacion, tramo, c.valor
 				) AS GBASE 
 				where a.codigo_operacion = GBASE.cod_operacion;				
@@ -283,10 +297,13 @@ BEGIN
 						    cod_operacion
 						   ,(capital - capital_pagado + interes_devengado + interes_moroso - interes_pagado) as "monto_origen"
 						   ,(otros - otros_pagado)                                                           as "otros"
-						    from interface.cuadro_operaciones  
+						    from interface.cuadro_operaciones 
+							where fecha_proceso = v_fecha
 					) as BASE   inner join interface.cartera_operaciones b on BASE.cod_operacion = b.cod_operacion
 					            inner join interface.tipo_cambio c         on b.cod_moneda = c.cod_moneda
 					  where to_char(b.fecha_aceleracion,'YYYYMMDD')::VARCHAR = '19000101'
+					  and b.fecha_proceso = v_fecha
+					  and c.fecha_proceso = v_fecha
 					group by BASE.cod_operacion, c.valor
 				) AS GBASE 
 				where a.codigo_operacion = GBASE.cod_operacion;								
@@ -321,6 +338,7 @@ BEGIN
 			  from interface.cuadro_operaciones
 			  		where (capital <> capital_pagado or interes_por_pagar <> interes_pagado or otros <> otros_pagado)
 					  and fecha_cuota <= fecha_proceso
+					  and fecha_proceso = v_fecha
 			  group by cod_operacion
 		   ) AS BASE where a.codigo_operacion = BASE.cod_operacion;
 
@@ -349,6 +367,7 @@ BEGIN
 					  ((a.gar_financiera * a.porc_financiera)/100)::numeric(15)                  as "gar_financiera",
 					  ((a.gar_personal * a.porc_personal)/100)::numeric(15)                      as "gar_personal"
 					   from interface.cartera_garantias a inner join interno.tipo_persona_rel c on a.cod_persona = c.cod_entidad
+					   where a.fecha_proceso = v_fecha
 				   ) as BASE
 				   group by cod_operacion
 			) as GBASE
@@ -417,6 +436,7 @@ BEGIN
 						  ((a.gar_personal * a.porc_personal)/100)::numeric(15)                      as "gar_personal"
 						   from interface.cartera_garantias a inner join interno.tipo_persona_rel c on a.cod_persona = c.cod_entidad
 						   where a.gar_personal > 0
+						   and a.fecha_proceso = v_fecha
 					   ) as BASE
 					   group by cod_operacion, rut_garante, cod_persona
 			   ) as GBASE on a.codigo_operacion = GBASE.cod_operacion;

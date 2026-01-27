@@ -14,7 +14,7 @@ BEGIN
 
 		-- | Determina fecha de proceso | --		
 
-		select valor::date
+		select to_date(valor,'YYYYMMDD')
 		into fecha_archivo
 		from interno.parametros_generales where cod = '3';
 
@@ -50,7 +50,8 @@ BEGIN
 			,causal_rectificacion
 			,numero_solicitud
 			,valor_contable
-		from interface.cartera_operaciones;		
+		from interface.cartera_operaciones
+		where fecha_proceso = fecha_archivo;		
 
 
 		-- | Ingresa historico cuadro operaciones | --				
@@ -71,7 +72,8 @@ BEGIN
 			,interes_pagado
 			,otros
 			,otros_pagado		
-		from interface.cuadro_operaciones; 
+		from interface.cuadro_operaciones
+		where fecha_proceso = fecha_archivo;
 
 		-- | Ingresa historico cuadro rectificaciones | --				
 
@@ -89,7 +91,8 @@ BEGIN
 			,fecha_rectificacion
 			,causal_rectificacion
 			,numero_solicitud
-		from interface.cuadro_rectificaciones;
+		from interface.cuadro_rectificaciones
+		where fecha_proceso = fecha_archivo;
 
 
 		-- | Ingresa historico tipo de cambio | --				
@@ -102,7 +105,8 @@ BEGIN
 			 fecha_proceso
 			,cod_moneda
 			,valor
-		from interface.tipo_cambio;
+		from interface.tipo_cambio
+		where fecha_proceso = fecha_archivo;
 
 
 		-- | Ingresa historico variacion de stock | --						
@@ -118,7 +122,8 @@ BEGIN
 			,fecha_efectivo_flujo
 			,ident_tribunal
 			,rut_tercera_parte		
-		from interface.variacion_stock;
+		from interface.variacion_stock
+		where fecha_proceso = fecha_archivo;
 
 
 		-- | Ingresa historico cartera de garantias | --						
@@ -142,7 +147,8 @@ BEGIN
 			,porc_financiera
 			,gar_personal
 			,porc_personal
-		from interface.cartera_garantias;
+		from interface.cartera_garantias
+		where fecha_proceso = fecha_archivo;
 
 		
 	EXCEPTION WHEN OTHERS THEN

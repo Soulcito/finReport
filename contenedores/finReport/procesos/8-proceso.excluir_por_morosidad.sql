@@ -14,7 +14,7 @@ BEGIN
 
 		-- | Determina fecha de proceso | --		
 
-		select valor::date
+		select to_date(valor,'YYYYMMDD')
 		into fecha_archivo
 		from interno.parametros_generales where cod = '3';
 
@@ -38,6 +38,7 @@ BEGIN
 				  from interface.cuadro_operaciones
 				  		where (capital <> capital_pagado or interes_por_pagar <> interes_pagado or otros <> otros_pagado)
 						  and fecha_cuota <= fecha_proceso
+						  and fecha_proceso = fecha_archivo
 				  group by cod_operacion
 			) as B left join interno.exclusion_morosidad as C on B.cod_operacion = C.cod_operacion
 			where (fecha_archivo - fecha)::int >= var_valor
