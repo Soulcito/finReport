@@ -122,6 +122,7 @@ BEGIN
 					   ,sum(capital - capital_pagado) as "capital"
 					   from interface.cuadro_operaciones a inner join reporte.rdc01_detalle b on a.cod_operacion = b.codigo_operacion
 					   where b.tipo_deudor = 1
+					   and a.fecha_proceso = fecha_archivo_dt
 					  group by a.cod_operacion
 					          ,b.tipo_obligacion
 					   		  ,b.rut
@@ -162,6 +163,7 @@ BEGIN
 					   ,sum(capital - capital_pagado) as "capital"
 					   from interface.cuadro_operaciones a inner join reporte.rdc01_detalle b on a.cod_operacion = b.codigo_operacion
 					   where b.tipo_deudor = 1
+					   and a.fecha_proceso = fecha_archivo_dt
 					  group by a.cod_operacion
 					          ,b.tipo_obligacion
 					   		  ,b.rut
@@ -203,6 +205,7 @@ BEGIN
 					   ,sum(capital - capital_pagado) as "capital"
 					   from interface.cuadro_operaciones a inner join reporte.rdc01_detalle b on a.cod_operacion = b.codigo_operacion
 					   where b.cod_moneda = cod_uf and b.tipo_deudor = 1
+					   and a.fecha_proceso = fecha_archivo_dt
 					  group by a.cod_operacion
 					          ,b.tipo_obligacion
 					   		  ,b.rut
@@ -220,7 +223,7 @@ BEGIN
 				  ) b on a.cod_operacion = b.cod_operacion
 				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
 					inner join (select *from historico.tipo_cambio where fecha_proceso = fecha_anterior_dt) d on a.cod_moneda = d.cod_moneda
-				  where a.capital = b.capital;				  
+				  where a.capital = b.capital and c.fecha_proceso = fecha_archivo_dt;				  
 
 
 		-- | Determinacion de flujo 03 Creditos nuevos | --	
@@ -292,7 +295,7 @@ BEGIN
 					   ,cod_tipo_obligacion											as "tipo_obligacion_interfaz"
 					   ,cod_moneda
 					   ,monto_actual
-					   from reporte.rdc01_hist a inner join historico.cartera_operaciones b on a.codigo_operacion = b.cod_operacion
+					   from reporte.rdc01_hist a inner join historico.cartera_operaciones b on a.codigo_operacion = b.cod_operacion and to_date(a.fecha_proceso,'YYYYMMDD') = b.fecha_proceso
 					   where tipo_deudor = 1 and a.fecha_proceso = fecha_anterior
 				  ) a left join 
 				  (
