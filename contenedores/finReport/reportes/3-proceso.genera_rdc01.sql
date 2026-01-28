@@ -16,15 +16,6 @@ BEGIN
 		*/
 
 
-		-- | Trunca tablas de uso en el procedimiento | --		
-
-		TRUNCATE TABLE reporte.rdc01_caratula;
-		TRUNCATE TABLE reporte.rdc01_texto;
-		TRUNCATE TABLE reporte.rdc01_detalle;
-		TRUNCATE TABLE reporte.rdc01_final;
-
-		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
-
 		-- | Determina fecha de proceso | --		
 
 		select valor
@@ -42,6 +33,15 @@ BEGIN
 		from interno.parametros_generales where cod = '1';		
 
 		RAISE NOTICE 'Codigo de institucion para RDC01: %', codigo_institucion;
+
+		-- | Trunca tablas de uso en el procedimiento | --		
+
+		TRUNCATE TABLE reporte.rdc01_caratula;
+		TRUNCATE TABLE reporte.rdc01_texto;
+		TRUNCATE TABLE reporte.rdc01_detalle;
+		TRUNCATE TABLE reporte.rdc01_final;
+
+		delete from reporte.rdc01_hist where fecha_proceso = fecha_archivo;
 
 		-- | Logica de generacion de reporte desde la interfaz cartera_operaciones | --
 
