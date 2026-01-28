@@ -6,6 +6,8 @@ DECLARE
 	v_descripcion varchar(2000);
 	v_valor_1 int;
 	v_valor_2 int;
+	v_suma_1 numeric(20);
+	v_suma_2 numeric(20);
 BEGIN
 
 		/**************************************************/
@@ -1551,6 +1553,216 @@ BEGIN
 			END LOOP;		
 
 		END IF;		
+
+
+		/*
+			41: Para el registro 2, Rut del deudor + codigo de la operacion + tipo de obligacion debe ser unico
+			Campo: Rut deudor + codigo operacion + tipo_obligacion
+			Tipo_registro: 2
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 41;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,41	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'02'																				as "tipo_registro"	
+				,'rut_deudor + codigo_operacion + tipo_obligacion'									as "campo"
+				,'rut_deudor: ' || rut_deudor || ', codigo_operacion: ' || codigo_operacion || ', tipo_obligacion: ' || tipo_obligacion	as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_2
+				 WHERE (rut_deudor, codigo_operacion, tipo_obligacion) in 
+				 (
+				    select rut_deudor, codigo_operacion, tipo_obligacion from (
+						select  rut_deudor, codigo_operacion, tipo_obligacion, count(1) from validador.rdc20_detalle_2
+								group by rut_deudor, codigo_operacion, tipo_obligacion
+								having count(1) > 1
+					) BASE					  
+				 )
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;		
+
+
+		/*
+			42: Para el registro 3, Rut del deudor + codigo de la operacion + tipo de obligacion debe ser unico
+			Campo: Rut deudor + codigo operacion + tipo_obligacion
+			Tipo_registro: 3
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 42;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,42	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'03'																				as "tipo_registro"	
+				,'rut_deudor + codigo_operacion + tipo_obligacion'									as "campo"
+				,'rut_deudor: ' || rut_deudor || ', codigo_operacion: ' || codigo_operacion || ', tipo_obligacion: ' || tipo_obligacion	as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_3
+				 WHERE (rut_deudor, codigo_operacion, tipo_obligacion) in 
+				 (
+				    select rut_deudor, codigo_operacion, tipo_obligacion from (
+						select  rut_deudor, codigo_operacion, tipo_obligacion, count(1) from validador.rdc20_detalle_3
+								group by rut_deudor, codigo_operacion, tipo_obligacion
+								having count(1) > 1
+					) BASE					  
+				 )
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			43: Para el registro 4, Rut del deudor + codigo de la operacion + tipo de obligacion debe ser unico
+			Campo: Rut deudor + codigo operacion + tipo_obligacion
+			Tipo_registro: 4
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 43;
+
+		FOR rec IN 
+
+			SELECT 
+				 linea
+				,43	                																as "num_validador"
+				,v_descripcion																		as "descripcion"
+				,'04'																				as "tipo_registro"	
+				,'rut_deudor + codigo_operacion + tipo_obligacion'									as "campo"
+				,'rut_deudor: ' || rut_deudor || ', codigo_operacion: ' || codigo_operacion || ', tipo_obligacion: ' || tipo_obligacion	as "dato_reportado"
+				,'NOOK'																				as "status"
+		    FROM validador.rdc20_detalle_4
+				 WHERE (rut_deudor, codigo_operacion, tipo_obligacion) in 
+				 (
+				    select rut_deudor, codigo_operacion, tipo_obligacion from (
+						select  rut_deudor, codigo_operacion, tipo_obligacion, count(1) from validador.rdc20_detalle_4
+								group by rut_deudor, codigo_operacion, tipo_obligacion
+								having count(1) > 1
+					) BASE					  
+				 )
+
+		LOOP
+
+			INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+			VALUES(
+				 rec.linea
+				,rec.num_validador
+				,rec.descripcion
+				,rec.tipo_registro
+				,rec.campo
+				,rec.dato_reportado
+				,rec.status
+			);			
+		    
+		END LOOP;
+
+
+		/*
+			44: Suma absoluta para montos de flujos 08 y 10 en el registro 1 es distinto a la suma de montos informado en el registro 2
+			Campo: monto
+			Tipo_registro: 1 y 2
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 44;
+		select coalesce(abs(sum(substring(monto,1,20)::numeric)),0) into v_suma_1 from validador.rdc20_detalle_1 where tipo_flujo in ('08','10');
+		select coalesce(abs(sum(monto::numeric)),0) into v_suma_2 from validador.rdc20_detalle_2;
+
+		IF v_suma_1 <> v_suma_2 THEN
+
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 0
+					,44
+					,v_descripcion
+					,'01 y 02'
+					,'monto'
+					,'Suma monto registro 1: ' || v_suma_1::varchar || ', Suma monto registro 2: ' || v_suma_2::varchar
+					,'NOOK'
+				);			
+			    
+		END IF;	
+
+
+		/*
+			45: Suma abosulta para montos de flujos 04 y 06 en el registro 1 es distinto a la suma de montos informado en el registro 3
+			Campo: monto
+			Tipo_registro: 1 y 3
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 45;
+		select coalesce(abs(sum(substring(monto,1,20)::numeric)),0) into v_suma_1 from validador.rdc20_detalle_1 where tipo_flujo in ('04','06');
+		select coalesce(abs(sum(monto::numeric)),0) into v_suma_2 from validador.rdc20_detalle_3;
+
+		IF v_suma_1 <> v_suma_2 THEN
+
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 0
+					,45
+					,v_descripcion
+					,'01 y 03'
+					,'monto'
+					,'Suma monto registro 1: ' || v_suma_1::varchar || ', Suma monto registro 3: ' || v_suma_2::varchar
+					,'NOOK'
+				);			
+			    
+		END IF;	
+
+
+		/*
+			46: Suma absoluta para montos de flujos 05 y 07 en el registro 1 es distinto a la suma de montos informado en el registro 4
+			Campo: monto
+			Tipo_registro: 1 y 4
+		*/		
+
+		select descripcion into v_descripcion from interno.diccionario_validador where num_validador = 46;
+		select coalesce(abs(sum(substring(monto,1,20)::numeric)),0) into v_suma_1 from validador.rdc20_detalle_1 where tipo_flujo in ('05','07');
+		select coalesce(abs(sum(monto::numeric)),0) into v_suma_2 from validador.rdc20_detalle_4;
+
+		IF v_suma_1 <> v_suma_2 THEN
+
+				INSERT INTO validador.rdc20_resultado(linea, num_validador, descripcion, tipo_registro, campo, dato_reportado, status)
+				VALUES(
+					 0
+					,46
+					,v_descripcion
+					,'01 y 04'
+					,'monto'
+					,'Suma monto registro 1: ' || v_suma_1::varchar || ', Suma monto registro 4: ' || v_suma_2::varchar
+					,'NOOK'
+				);			
+			    
+		END IF;			
 		
 		
 		EXCEPTION WHEN OTHERS THEN
