@@ -223,7 +223,8 @@ BEGIN
 				  ) b on a.cod_operacion = b.cod_operacion
 				    inner join interface.tipo_cambio c on a.cod_moneda = c.cod_moneda
 					inner join (select *from historico.tipo_cambio where fecha_proceso = fecha_anterior_dt) d on a.cod_moneda = d.cod_moneda
-				  where a.capital = b.capital and c.fecha_proceso = fecha_archivo_dt;				  
+				  where a.capital = b.capital and c.fecha_proceso = fecha_archivo_dt
+				  and ((a.capital  * c.valor) - (b.capital  * d.valor))::numeric(20) <> 0;
 
 
 		-- | Determinacion de flujo 03 Creditos nuevos | --	
