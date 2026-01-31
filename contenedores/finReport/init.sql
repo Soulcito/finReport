@@ -52,6 +52,8 @@
 \ir /docker-entrypoint-initdb.d/reportes/3-proceso.genera_rdc01.sql
 \ir /docker-entrypoint-initdb.d/reportes/4-rdc20.sql
 \ir /docker-entrypoint-initdb.d/reportes/5-proceso.genera_rdc20.sql
+\ir /docker-entrypoint-initdb.d/reportes/6-rdc22.sql
+\ir /docker-entrypoint-initdb.d/reportes/7-proceso.genera_rdc22.sql
 
 -- Ejecutar scripts de la carpeta validadores
 \echo '=== Ejecutando scripts de VALIDADORES ==='
@@ -70,6 +72,8 @@
 \ir /docker-entrypoint-initdb.d/validadores/13-rdc20.sql
 \ir /docker-entrypoint-initdb.d/validadores/14-proceso.val_reporte_rdc20.sql
 \ir /docker-entrypoint-initdb.d/validadores/15-proceso.val_num_16.sql
+\ir /docker-entrypoint-initdb.d/validadores/16-rdc22.sql
+\ir /docker-entrypoint-initdb.d/validadores/17-proceso.val_reporte_rdc22.sql
 
 
 \echo '=== Inicialización completada ==='

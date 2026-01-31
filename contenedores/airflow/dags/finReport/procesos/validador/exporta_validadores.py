@@ -40,6 +40,21 @@ TABLAS_RDC20 = [
     ("validador", "rdc20_resultado")    
 ]
 
+# ==============================
+# CONFIGURACIÓN DETALLE REPORTE
+# ==============================
+
+GROUP_NAME_RDC22 = "exporta_validadores_rdc22"
+NOMBRE_RDC22 = "RDC22"
+
+# Lista de tablas a exportar:
+# Cada item = (schema, tabla)
+
+TABLAS_RDC22 = [
+    ("validador", "rdc22_detalle"),
+    ("validador", "rdc22_resultado")    
+]
+
 
 # ==============================
 # TASK GROUP BUILDER (reutilizable)
@@ -102,8 +117,15 @@ def build_group(dag):
             EXCEL_DIR,
             NOMBRE_RDC20
         )
+        
+        grupo_rdc22 = _build_excel_group(
+            GROUP_NAME_RDC22,
+            TABLAS_RDC22,
+            EXCEL_DIR,
+            NOMBRE_RDC22
+        )        
 
-        grupo_rdc01 >> grupo_rdc20
+        grupo_rdc01 >> grupo_rdc20 >> grupo_rdc22
 
     return main_group
 

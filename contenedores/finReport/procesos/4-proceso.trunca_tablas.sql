@@ -69,6 +69,10 @@ BEGIN
 		TRUNCATE TABLE reporte.rdc20_final_3;
 		TRUNCATE TABLE reporte.rdc20_final_4;		
 		TRUNCATE TABLE reporte.rdc20_caratula;				
+		TRUNCATE TABLE reporte.rdc22_texto;
+		TRUNCATE TABLE reporte.rdc22_detalle;
+		TRUNCATE TABLE reporte.rdc22_final;
+		TRUNCATE TABLE reporte.rdc22_caratula;
 		
 		
 	EXCEPTION WHEN OTHERS THEN
