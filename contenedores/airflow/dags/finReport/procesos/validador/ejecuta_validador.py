@@ -12,6 +12,7 @@ GROUP_NAME = "ejecuta_validador"
 PROCEDIMIENTOS = [
     ("proceso", "val_reporte_rdc01"),
     ("proceso", "val_reporte_rdc20"),
+    ("proceso", "val_reporte_rdc22")
 ]
 
 executor = ProcedureExecutor(PG_CONN, name=GROUP_NAME)

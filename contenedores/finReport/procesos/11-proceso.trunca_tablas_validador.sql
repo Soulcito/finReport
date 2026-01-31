@@ -22,6 +22,12 @@ BEGIN
 		truncate table validador.rdc20_detalle_4;
 		truncate table validador.rdc20_resultado;		
 
+		-- RDC22
+
+		truncate table validador.rdc22_texto;
+		truncate table validador.rdc22_detalle;
+		truncate table validador.rdc22_resultado;
+
 		-- MANTENEDOR PARA VALIDADOR
 
 		truncate table interno.diccionario_validador;
