@@ -177,6 +177,43 @@ BEGIN
 			,problema
 		FROM log.variacion_stock;
 
+
+		-- | Ingresa historico registro_consentimientos_hist | --						
+
+		DELETE FROM log.registro_consentimientos_hist
+		where fecha_proceso = fecha_archivo;
+
+		INSERT INTO log.registro_consentimientos_hist (
+														 fecha_proceso			    	
+														,cod_consentimiento				
+														,fecha_otorgamiento		    	
+														,hora_otorgamiento				
+														,fecha_fin_consentimiento		
+														,hora_fin_consentimiento		
+														,rut_consultado					
+														,cod_medio_consentimiento		
+														,cod_finalidad_consentimiento	
+														,rut_ejecutivo					
+														,cod_objetivo_consentimiento	
+														,problema                   	
+
+		)
+		select 
+			 fecha_proceso			    	
+			,cod_consentimiento				
+			,fecha_otorgamiento		    	
+			,hora_otorgamiento				
+			,fecha_fin_consentimiento		
+			,hora_fin_consentimiento		
+			,rut_consultado					
+			,cod_medio_consentimiento		
+			,cod_finalidad_consentimiento	
+			,rut_ejecutivo					
+			,cod_objetivo_consentimiento	
+			,problema                   	
+		from log.registro_consentimientos;
+
+
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;

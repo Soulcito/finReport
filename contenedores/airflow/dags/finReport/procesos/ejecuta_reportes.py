@@ -13,6 +13,7 @@ PROCEDIMIENTOS = [
     ("proceso", "genera_rdc01"),
     ("proceso", "genera_rdc20"),   
     ("proceso", "genera_rdc22"),
+    ("proceso", "genera_rdc30"),
 ]
 
 executor = ProcedureExecutor(PG_CONN, name=GROUP_NAME)
