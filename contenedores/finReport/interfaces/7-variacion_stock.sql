@@ -135,7 +135,7 @@ CREATE TABLE respaldo.variacion_stock (
 );
 
 
--- LOG historico para cartera_garantias
+-- LOG historico
 
 DO
 $$

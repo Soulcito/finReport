@@ -23,6 +23,8 @@ TABLAS_EXCEL = [
     ("log", "cuadro_rectificaciones"),
     ("log", "tipo_cambio"),
     ("log", "cartera_garantias"),
+    ("log", "variacion_stock"),    
+    ("log", "registro_consentimientos"),        
 ]
 
 

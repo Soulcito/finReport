@@ -11,6 +11,7 @@
 \ir /docker-entrypoint-initdb.d/interfaces/5-cuadro_rectificaciones.sql
 \ir /docker-entrypoint-initdb.d/interfaces/6-cartera_garantias.sql
 \ir /docker-entrypoint-initdb.d/interfaces/7-variacion_stock.sql
+\ir /docker-entrypoint-initdb.d/interfaces/8-registro_consentimientos.sql
 
 -- Ejecutar scripts de la carpeta tablas_internas
 \echo '=== Ejecutando scripts de TABLAS INTERNAS ==='
@@ -25,6 +26,9 @@
 \ir /docker-entrypoint-initdb.d/tablas_internas/9-exclusion_morosidad.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/10-calendario_rdc20.sql
 \ir /docker-entrypoint-initdb.d/tablas_internas/11-diccionario_validador.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/12-medio_consentimiento.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/13-finalidad_consentimiento.sql
+\ir /docker-entrypoint-initdb.d/tablas_internas/14-objetivo_consentimiento.sql
 
 -- Ejecutar scripts de la carpeta logs
 \echo '=== Ejecutando scripts de LOGS ==='
@@ -54,6 +58,8 @@
 \ir /docker-entrypoint-initdb.d/reportes/5-proceso.genera_rdc20.sql
 \ir /docker-entrypoint-initdb.d/reportes/6-rdc22.sql
 \ir /docker-entrypoint-initdb.d/reportes/7-proceso.genera_rdc22.sql
+\ir /docker-entrypoint-initdb.d/reportes/8-rdc30.sql
+\ir /docker-entrypoint-initdb.d/reportes/9-proceso.genera_rdc30.sql
 
 -- Ejecutar scripts de la carpeta validadores
 \echo '=== Ejecutando scripts de VALIDADORES ==='

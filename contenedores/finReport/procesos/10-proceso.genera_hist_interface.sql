@@ -150,7 +150,40 @@ BEGIN
 		from interface.cartera_garantias
 		where fecha_proceso = fecha_archivo;
 
-		
+
+		-- | Ingresa historico registro de consentimientos | --								
+
+		delete from historico.registro_consentimientos
+		where fecha_proceso = fecha_archivo;
+
+		insert into historico.registro_consentimientos (
+														 fecha_proceso			    	
+														,cod_consentimiento				
+														,fecha_otorgamiento		    	
+														,hora_otorgamiento				
+														,fecha_fin_consentimiento		
+														,hora_fin_consentimiento		
+														,rut_consultado					
+														,cod_medio_consentimiento		
+														,cod_finalidad_consentimiento	
+														,rut_ejecutivo					
+														,cod_objetivo_consentimiento	
+		)
+		select 
+			 fecha_proceso			    	
+			,cod_consentimiento				
+			,fecha_otorgamiento		    	
+			,hora_otorgamiento				
+			,fecha_fin_consentimiento		
+			,hora_fin_consentimiento		
+			,rut_consultado					
+			,cod_medio_consentimiento		
+			,cod_finalidad_consentimiento	
+			,rut_ejecutivo					
+			,cod_objetivo_consentimiento	
+		from interface.registro_consentimientos
+		where fecha_proceso = fecha_archivo;
+				
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;
 		INSERT INTO log.log_eventos (fecha, nivel, dag, procedimiento, mensaje)
