@@ -29,6 +29,7 @@ CREATE TABLE tmp.registro_consentimientos (
 	,cod_finalidad_consentimiento	varchar(250) null
 	,rut_ejecutivo					varchar(250) null
 	,cod_objetivo_consentimiento	varchar(250) null
+	,cod_encriptado					varchar(250) null
 );
 
 
@@ -60,6 +61,7 @@ CREATE TABLE log.registro_consentimientos (
 	,cod_finalidad_consentimiento	varchar(50) not null
 	,rut_ejecutivo					varchar(20) not null
 	,cod_objetivo_consentimiento	varchar(50) not null
+	,cod_encriptado					varchar(250) not null
 	,problema                   	TEXT null
 );
 
@@ -92,6 +94,7 @@ CREATE TABLE interface.registro_consentimientos (
 	,cod_finalidad_consentimiento	varchar(50) not null
 	,rut_ejecutivo					varchar(20) not null
 	,cod_objetivo_consentimiento	varchar(50) not null
+	,cod_encriptado					varchar(250) not null
 );
 
 DO
@@ -122,6 +125,7 @@ CREATE TABLE historico.registro_consentimientos (
 	,cod_finalidad_consentimiento	varchar(50) not null
 	,rut_ejecutivo					varchar(20) not null
 	,cod_objetivo_consentimiento	varchar(50) not null
+	,cod_encriptado					varchar(250) not null
 );
 
 DO
@@ -152,6 +156,7 @@ CREATE TABLE respaldo.registro_consentimientos (
 	,cod_finalidad_consentimiento	varchar(50) not null
 	,rut_ejecutivo					varchar(20) not null
 	,cod_objetivo_consentimiento	varchar(50) not null
+	,cod_encriptado					varchar(250) not null
 );
 
 
@@ -185,6 +190,7 @@ CREATE TABLE log.registro_consentimientos_hist (
 	,cod_finalidad_consentimiento	varchar(50) not null
 	,rut_ejecutivo					varchar(20) not null
 	,cod_objetivo_consentimiento	varchar(50) not null
+	,cod_encriptado					varchar(250) not null
 	,problema                   	TEXT null
 );
 

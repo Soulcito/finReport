@@ -66,20 +66,24 @@ BEGIN
 											,cod_medio_consentimiento		
 											,cod_finalidad_consentimiento	
 											,rut_ejecutivo					
-											,cod_objetivo_consentimiento	
+											,cod_objetivo_consentimiento
+											,cod_encriptado
 		)
 		select 
-			 a.fecha_proceso											as "fecha_proceso"
-			,a.cod_consentimiento										as "cod_consentimiento"
-			,a.fecha_otorgamiento										as "fecha_otorgamiento"
-			,a.hora_otorgamiento										as "hora_otorgamiento"
-			,a.fecha_fin_consentimiento									as "fecha_fin_consentimiento"
-			,a.hora_fin_consentimiento									as "hora_fin_consentimiento"
+			 a.fecha_proceso												as "fecha_proceso"
+			,a.cod_consentimiento											as "cod_consentimiento"
+			,a.fecha_otorgamiento											as "fecha_otorgamiento"
+			,a.hora_otorgamiento											as "hora_otorgamiento"
+			,a.fecha_fin_consentimiento										as "fecha_fin_consentimiento"
+			,case
+				when a.fecha_fin_consentimiento = '19000101' then '999999'
+				else a.hora_fin_consentimiento end							as "hora_fin_consentimiento"
 			,a.rut_consultado												as "rut_consultado"
-			,b.cod_consentimiento										as "cod_medio_consentimiento"
-			,c.cod_finalidad											as "cod_finalidad_consentimiento"
-			,a.rut_ejecutivo											as "rut_ejecutivo"
-			,d.cod_objetivo												as "cod_objetivo_consentimiento"
+			,b.cod_consentimiento											as "cod_medio_consentimiento"
+			,c.cod_finalidad												as "cod_finalidad_consentimiento"
+			,a.rut_ejecutivo												as "rut_ejecutivo"
+			,d.cod_objetivo													as "cod_objetivo_consentimiento"
+			,a.cod_encriptado												as "cod_encriptado"
 		FROM historico.registro_consentimientos a inner join interno.medio_consentimiento_rel b     on a.cod_medio_consentimiento = b.cod_entidad
 											  	  inner join interno.finalidad_consentimiento_rel c on a.cod_finalidad_consentimiento = c.cod_entidad
 											  	  inner join interno.objetivo_consentimiento_rel d  on a.cod_objetivo_consentimiento = d.cod_entidad
@@ -102,6 +106,7 @@ BEGIN
 											,cod_finalidad_consentimiento	
 											,rut_ejecutivo					
 											,cod_objetivo_consentimiento
+											,cod_encriptado
 		)
 		select 
 			 cod_consentimiento				
@@ -114,6 +119,7 @@ BEGIN
 			,cod_finalidad_consentimiento	
 			,LPAD(rut_ejecutivo,10,'0')									as "rut_ejecutivo"					
 			,LPAD(cod_objetivo_consentimiento,2,'0')					as "cod_objetivo_consentimiento"	
+			,cod_encriptado
 		FROM reporte.rdc30_detalle;
 
 
@@ -132,6 +138,7 @@ BEGIN
 										,cod_finalidad_consentimiento	
 										,rut_ejecutivo					
 										,cod_objetivo_consentimiento	
+										,cod_encriptado
 
 		)
 		select 
@@ -146,6 +153,7 @@ BEGIN
 			,cod_finalidad_consentimiento	
 			,rut_ejecutivo					
 			,cod_objetivo_consentimiento	
+			,cod_encriptado
 		FROM reporte.rdc30_final;		
 
 
@@ -153,7 +161,7 @@ BEGIN
 		
 
 		insert into reporte.rdc30_texto(registro)  
-		select RPAD(codigo_institucion || 'RDC30' || fecha_archivo,72,' ')  as "registro"
+		select RPAD(codigo_institucion || 'RDC30' || fecha_archivo,136,' ')  as "registro"
 		union all
 		select 
 		    RPAD(cod_consentimiento,20,' ') || 
@@ -165,7 +173,8 @@ BEGIN
 			cod_medio_consentimiento ||
 			cod_finalidad_consentimiento ||
 			rut_ejecutivo ||
-			cod_objetivo_consentimiento 		 as "registro"
+			cod_objetivo_consentimiento ||
+			RPAD(cod_encriptado,64,' ')			as "registro"
 		FROM reporte.rdc30_final;
 
 

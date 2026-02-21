@@ -195,6 +195,7 @@ BEGIN
 														,cod_finalidad_consentimiento	
 														,rut_ejecutivo					
 														,cod_objetivo_consentimiento	
+														,cod_encriptado
 														,problema                   	
 
 		)
@@ -210,6 +211,7 @@ BEGIN
 			,cod_finalidad_consentimiento	
 			,rut_ejecutivo					
 			,cod_objetivo_consentimiento	
+			,cod_encriptado
 			,problema                   	
 		from log.registro_consentimientos;
 
