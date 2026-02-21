@@ -168,6 +168,7 @@ BEGIN
 														,cod_finalidad_consentimiento	
 														,rut_ejecutivo					
 														,cod_objetivo_consentimiento	
+														,cod_encriptado
 		)
 		select 
 			 fecha_proceso			    	
@@ -181,6 +182,7 @@ BEGIN
 			,cod_finalidad_consentimiento	
 			,rut_ejecutivo					
 			,cod_objetivo_consentimiento	
+			,cod_encriptado
 		from interface.registro_consentimientos
 		where fecha_proceso = fecha_archivo;
 				

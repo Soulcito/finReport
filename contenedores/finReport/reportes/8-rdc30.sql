@@ -48,6 +48,7 @@ CREATE TABLE reporte.rdc30_detalle (
 	,cod_finalidad_consentimiento	varchar(1) not null
 	,rut_ejecutivo					varchar(10) not null
 	,cod_objetivo_consentimiento	varchar(2) not null
+	,cod_encriptado					varchar(64) not null
 ); 
 
 
@@ -79,6 +80,7 @@ CREATE TABLE reporte.rdc30_final (
 	,cod_finalidad_consentimiento	varchar(1) not null
 	,rut_ejecutivo					varchar(10) not null
 	,cod_objetivo_consentimiento	varchar(2) not null
+	,cod_encriptado					varchar(64) not null	
 ); 
 
 
@@ -113,6 +115,7 @@ CREATE TABLE reporte.rdc30_hist (
 	,cod_finalidad_consentimiento	varchar(1) not null
 	,rut_ejecutivo					varchar(10) not null
 	,cod_objetivo_consentimiento	varchar(2) not null
+	,cod_encriptado					varchar(64) not null	
 ); 
 
 
