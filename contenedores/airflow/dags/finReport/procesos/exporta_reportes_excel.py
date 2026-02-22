@@ -28,6 +28,8 @@ TABLAS_EXCEL_REPORTE = [
     ("reporte", "rdc22_caratula"),
     ("reporte", "rdc30_final"),
     ("reporte", "rdc30_caratula"),    
+    ("reporte", "rdc31_final"),
+    ("reporte", "rdc31_caratula"),        
 ]
 
 # ==============================
@@ -48,6 +50,7 @@ TABLAS_EXCEL_DETALLE = [
     ("reporte", "rdc20_detalle_4"),
     ("reporte", "rdc22_detalle"),
     ("reporte", "rdc30_detalle"),    
+    ("reporte", "rdc31_detalle"),        
 ]
 
 
