@@ -25,6 +25,7 @@ TABLAS_EXCEL = [
     ("log", "cartera_garantias"),
     ("log", "variacion_stock"),    
     ("log", "registro_consentimientos"),        
+    ("log", "acceso_consentimientos"),            
 ]
 
 

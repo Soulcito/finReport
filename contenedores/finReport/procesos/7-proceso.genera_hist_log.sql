@@ -216,6 +216,29 @@ BEGIN
 		from log.registro_consentimientos;
 
 
+		-- | Ingresa historico acceso_consentimientos_hist | --						
+
+		DELETE FROM log.acceso_consentimientos_hist
+		where fecha_proceso = fecha_archivo;
+
+		INSERT INTO log.acceso_consentimientos_hist (
+														 fecha_proceso			    	
+														,cod_consentimiento				
+														,fecha_acceso
+														,hora_acceso
+														,rut_mandatario
+														,problema                   	
+
+		)
+		select 
+			 fecha_proceso			    	
+			,cod_consentimiento				
+			,fecha_acceso
+			,hora_acceso
+			,rut_mandatario
+			,problema                   	
+		from log.acceso_consentimientos;
+
 		
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;

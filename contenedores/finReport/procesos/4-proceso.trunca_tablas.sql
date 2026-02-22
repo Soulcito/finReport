@@ -17,6 +17,7 @@ BEGIN
 		TRUNCATE TABLE tmp.cartera_garantias;
 		TRUNCATE TABLE tmp.variacion_stock;
 		TRUNCATE TABLE tmp.registro_consentimientos;
+		TRUNCATE TABLE tmp.acceso_consentimientos;
 
 		-- LOG
 
@@ -28,6 +29,7 @@ BEGIN
 		TRUNCATE TABLE log.cartera_garantias;
 		TRUNCATE TABLE log.variacion_stock;
 		TRUNCATE TABLE log.registro_consentimientos;
+		TRUNCATE TABLE log.acceso_consentimientos;
 
 		-- INTERFACE
 
@@ -38,6 +40,7 @@ BEGIN
 		TRUNCATE TABLE interface.cartera_garantias;
 		TRUNCATE TABLE interface.variacion_stock;
 		TRUNCATE TABLE interface.registro_consentimientos;
+		TRUNCATE TABLE interface.acceso_consentimientos;
 
 		-- INTERNO
 
@@ -61,6 +64,7 @@ BEGIN
 		DELETE FROM interno.finalidad_consentimiento;
 		DELETE FROM interno.objetivo_consentimiento_rel;
 		DELETE FROM interno.objetivo_consentimiento;
+		TRUNCATE TABLE interno.feriados;
 
         -- REPORTES
 
@@ -86,6 +90,11 @@ BEGIN
 		TRUNCATE TABLE reporte.rdc30_detalle;
 		TRUNCATE TABLE reporte.rdc30_final;		
 		TRUNCATE TABLE reporte.rdc30_caratula;		
+		TRUNCATE TABLE reporte.rdc31_texto;
+		TRUNCATE TABLE reporte.rdc31_detalle;
+		TRUNCATE TABLE reporte.rdc31_final;		
+		TRUNCATE TABLE reporte.rdc31_caratula;		
+		
 		
 		
 	EXCEPTION WHEN OTHERS THEN

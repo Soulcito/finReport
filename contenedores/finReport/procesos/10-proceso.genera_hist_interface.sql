@@ -185,6 +185,27 @@ BEGIN
 			,cod_encriptado
 		from interface.registro_consentimientos
 		where fecha_proceso = fecha_archivo;
+
+		-- | Ingresa historico acceso de consentimientos | --								
+
+		delete from historico.acceso_consentimientos
+		where fecha_proceso = fecha_archivo;
+
+		insert into historico.acceso_consentimientos (
+														 fecha_proceso			    	
+														,cod_consentimiento				
+														,fecha_acceso	
+														,hora_acceso				
+														,rut_mandatario
+		)
+		select 
+			 fecha_proceso			    	
+			,cod_consentimiento				
+			,fecha_acceso	
+			,hora_acceso				
+			,rut_mandatario
+		from interface.acceso_consentimientos
+		where fecha_proceso = fecha_archivo;		
 				
 	EXCEPTION WHEN OTHERS THEN
 		RAISE NOTICE 'Error durante en el proceso: %', SQLERRM;

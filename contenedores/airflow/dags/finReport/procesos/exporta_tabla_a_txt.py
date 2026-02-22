@@ -20,6 +20,7 @@ REPORTES = [
     ("reporte", "rdc20_texto", REPORT_DIR, 10, 13),
     ("reporte", "rdc22_texto", REPORT_DIR, 10, 13),
     ("reporte", "rdc30_texto", REPORT_DIR, 10, 13),    
+    ("reporte", "rdc31_texto", REPORT_DIR, 10, 13),        
 ]
 
 
