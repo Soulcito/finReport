@@ -37,3 +37,15 @@ def build_group(dag):
             )
 
     return group
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Ejecuta los procedimientos de este módulo en forma directa,
+    para uso desde el orquestador secuencial.
+    """
+    for schema, proc in PROCEDIMIENTOS:
+        executor.ejecutar(schema=schema, procedimiento=proc)

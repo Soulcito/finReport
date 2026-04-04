@@ -44,10 +44,9 @@ def build_group(dag, reportes=REPORTES):
 
     with TaskGroup(group_id=GROUP_NAME, dag=dag) as group:
 
-        tareas = []
         for schema, tabla, out_dir, pos, largo in reportes:
 
-            tarea = PythonOperator(
+            PythonOperator(
                 task_id=f"exporta_{schema}_{tabla}",
                 python_callable=exporter.exportar,
                 op_kwargs={
@@ -59,8 +58,23 @@ def build_group(dag, reportes=REPORTES):
                 },
             )
 
-            tareas.append(tarea)
-
-        tareas  # ejecución en paralelo
-
+            
     return group
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Exporta los reportes TXT en forma secuencial,
+    para uso desde el orquestador.
+    """
+    for schema, tabla, out_dir, pos, largo in REPORTES:
+        exporter.exportar(
+            schema=schema,
+            tabla=tabla,
+            out_dir=out_dir,
+            pos_nombre=pos,
+            largo_nombre=largo,
+        )

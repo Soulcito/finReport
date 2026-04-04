@@ -19,7 +19,6 @@ GROUP_NAME = "import_interfaz"
 INTERFACE_DIR = "/opt/airflow/finReport/interface"
 
 logger = get_logger(GROUP_NAME, "", PG_CONN)
-logger.info("Iniciando carga de interfaces")
 
 # ==============================
 # FUNCIONES AUXILIARES
@@ -92,7 +91,10 @@ def safe_string(x, col):
 # FUNCIÓN PRINCIPAL
 # ==============================
 
-def load_interfaz(**context):
+def load_interfaz():
+    
+    logger.info("Iniciando carga de interfaces")    
+    
     schema = "interno"
     schema_destino = "interface"
     tabla = "interfaz"
@@ -272,6 +274,7 @@ def load_interfaz(**context):
 # ==============================
 
 def build_group(dag):
+       
     with TaskGroup(group_id=GROUP_NAME, dag=dag) as group:
 
         PythonOperator(
@@ -280,3 +283,11 @@ def build_group(dag):
         )
 
     return group
+
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    load_interfaz()

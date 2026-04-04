@@ -29,16 +29,24 @@ def build_group(dag):
 
     with TaskGroup(group_id=GROUP_NAME, dag=dag) as group:
 
-        tareas = []
         for schema, proc in PROCEDIMIENTOS:
-            tarea = PythonOperator(
+            PythonOperator(
                 task_id=f"call_{schema}_{proc}",
                 python_callable=executor.ejecutar,
                 op_kwargs={"schema": schema, "procedimiento": proc},
             )
-            tareas.append(tarea)
 
-        # Ambas tareas se ejecutan en paralelo
-        tareas
 
     return group
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Ejecuta los procesos adicionales en forma secuencial,
+    para uso desde el orquestador.
+    """
+    for schema, proc in PROCEDIMIENTOS:
+        executor.ejecutar(schema=schema, procedimiento=proc)
