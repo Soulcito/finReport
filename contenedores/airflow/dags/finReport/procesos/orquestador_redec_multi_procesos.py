@@ -62,21 +62,16 @@ def obtener_fechas_interfaces():
 # ============================================
 
 def marca_inicio_fecha(fecha):
-    conn = psycopg2.connect(**PG_CONN)
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        update interno.parametros_generales
-        set valor = %s
-        where cod = '3'
-        """,
-        (fecha,)
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
+    with psycopg2.connect(**PG_CONN) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                update interno.parametros_generales
+                set valor = %s
+                where cod = '3'
+                """,
+                (fecha,)
+            )
 
 
 # ============================================
