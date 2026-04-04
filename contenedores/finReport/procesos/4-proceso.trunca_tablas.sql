@@ -44,27 +44,27 @@ BEGIN
 
 		-- INTERNO
 
-		DELETE FROM interno.interfaz_rel;
-		DELETE FROM interno.interfaz;
-		DELETE FROM interno.operacion_titulo_rel;
-		DELETE FROM interno.operacion_titulo;
-		DELETE FROM interno.tabla_banco_126_rel;
-		DELETE FROM interno.tabla_banco_126;
-		DELETE FROM interno.tipo_deudor_rel;
-		DELETE FROM interno.tipo_deudor;
-		DELETE FROM interno.tipo_persona_rel;
-		DELETE FROM interno.tipo_persona;
-		TRUNCATE TABLE interno.parametros_generales;
-		DELETE FROM interno.tipo_flujo_rel;
-		DELETE FROM interno.tipo_flujo;
-		TRUNCATE TABLE interno.calendario_rdc20;
-		DELETE FROM interno.medio_consentimiento_rel;
-		DELETE FROM interno.medio_consentimiento;
-		DELETE FROM interno.finalidad_consentimiento_rel;
-		DELETE FROM interno.finalidad_consentimiento;
-		DELETE FROM interno.objetivo_consentimiento_rel;
-		DELETE FROM interno.objetivo_consentimiento;
-		TRUNCATE TABLE interno.feriados;
+		--DELETE FROM interno.interfaz_rel;
+		--DELETE FROM interno.interfaz;
+		--DELETE FROM interno.operacion_titulo_rel;
+		--DELETE FROM interno.operacion_titulo;
+		--DELETE FROM interno.tabla_banco_126_rel;
+		--DELETE FROM interno.tabla_banco_126;
+		--DELETE FROM interno.tipo_deudor_rel;
+		--DELETE FROM interno.tipo_deudor;
+		--DELETE FROM interno.tipo_persona_rel;
+		--DELETE FROM interno.tipo_persona;
+		--TRUNCATE TABLE interno.parametros_generales;
+		--DELETE FROM interno.tipo_flujo_rel;
+		--DELETE FROM interno.tipo_flujo;
+		--TRUNCATE TABLE interno.calendario_rdc20;
+		--DELETE FROM interno.medio_consentimiento_rel;
+		--DELETE FROM interno.medio_consentimiento;
+		--DELETE FROM interno.finalidad_consentimiento_rel;
+		--DELETE FROM interno.finalidad_consentimiento;
+		--DELETE FROM interno.objetivo_consentimiento_rel;
+		--DELETE FROM interno.objetivo_consentimiento;
+		--TRUNCATE TABLE interno.feriados;
 
         -- REPORTES
 

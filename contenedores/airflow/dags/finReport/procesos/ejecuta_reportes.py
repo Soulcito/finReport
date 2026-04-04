@@ -44,3 +44,15 @@ def build_group(dag):
             prev_task = tarea  # actualizar referencia
 
     return group
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Ejecuta los reportes en forma secuencial,
+    para uso desde el orquestador.
+    """
+    for schema, proc in PROCEDIMIENTOS:
+        executor.ejecutar(schema=schema, procedimiento=proc)

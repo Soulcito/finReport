@@ -52,7 +52,7 @@ def build_group(dag, tablas=TABLAS_EXCEL, out_dir=EXCEL_DIR, nombre_excel=NOMBRE
 
     with TaskGroup(group_id=GROUP_NAME, dag=dag) as group:
 
-        tarea = PythonOperator(
+        PythonOperator(
             task_id="exporta_excel_multitablas",
             python_callable=exporter.exportar,
             op_kwargs={
@@ -63,3 +63,19 @@ def build_group(dag, tablas=TABLAS_EXCEL, out_dir=EXCEL_DIR, nombre_excel=NOMBRE
         )
 
     return group
+
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Exporta los logs a Excel en forma secuencial,
+    para uso desde el orquestador.
+    """
+    exporter.exportar(
+        tablas=TABLAS_EXCEL,
+        out_dir=EXCEL_DIR,
+        nombre_excel=NOMBRE_EXCEL,
+    )

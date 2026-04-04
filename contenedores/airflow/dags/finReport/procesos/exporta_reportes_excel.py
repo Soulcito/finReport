@@ -120,3 +120,34 @@ def build_group(dag):
 
     return main_group
 
+
+# ==============================
+# EJECUCIÓN DIRECTA DEL MÓDULO
+# ==============================
+
+def run():
+    """
+    Exporta los Excel de reportes y detalle en forma secuencial,
+    para uso desde el orquestador.
+    """
+    exporter_reporte = MultiTableToExcelExporter(
+        conn_params=PG_CONN,
+        name=GROUP_NAME_REPORTE
+    )
+
+    exporter_detalle = MultiTableToExcelExporter(
+        conn_params=PG_CONN,
+        name=GROUP_NAME_DETALLE
+    )
+
+    exporter_reporte.exportar(
+        tablas=TABLAS_EXCEL_REPORTE,
+        out_dir=EXCEL_DIR,
+        nombre_excel=NOMBRE_EXCEL_REPORTE,
+    )
+
+    exporter_detalle.exportar(
+        tablas=TABLAS_EXCEL_DETALLE,
+        out_dir=EXCEL_DIR,
+        nombre_excel=NOMBRE_EXCEL_DETALLE,
+    )
