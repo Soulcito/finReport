@@ -94,6 +94,18 @@ Todo lo que es reporte sale en formato TXT y en excel, los log salen en excel pa
   <img src="imagenes\image-3.png" alt="alt text" width="700">
 </p>
 
+<p>El sistema desde la version 1.1.0, permite procesar interfaces en excel, hay ejemplos en la carpeta analisis del proyecto.
+  
+  Consideraciones si vas a trabajar con interfaces en EXCEL:
+
+1. Extension permitida .xlsx
+2. El nombre de las interfaces en excel es el mismo que se utiliza en TXT, ejemplo A0120251107.xlsx, en donde los 3 primeros caracteres son la codificacion de la interfaz y los otros 8 son la fecha en formato YYYYMMDD
+3. Para configurar que el sistema procese interfaces en excel, deben ir al mantenedor de parametros generales, colocar el valor NO en el cod = 4 y dejar el valor en SI para el cod = 5.
+4. A diferencia de las interfaces en TXT, el proceso considera que las interfaces en excel llevan cabecera, los campos de cabecera son referenciales, pero deben tener las mismas columnas
+5. El sistema siempre toma la primera hoja para procesar los datos
+6. Es mejor manejar los datos en el excel como texto, asi no incurren en problemas de formato, recordar que los datos numericos, el decimal se maneja con punto y no debe llevar comas. Todo esto de como se debe formatear los datos estan en la carpeta de analisis, ver [aqui](https://github.com/Soulcito/finReport/blob/main/Analisis/Interfaces/interfaces.xlsx)
+</p>
+
 ### Ejemplo de logs:<br><br>
 
 <p align="center">

@@ -80,6 +80,12 @@ Estos tres valores, deberian ser cambiados por cada institucion.
   <img src="imagenes\image-3.png" alt="alt text" width="400">
 </p>
 
+<p>
+  Desde la version 1.1.0 se habilito la posibilidad de procesar las interfaces en excel, el codigo 4 esta por defecto en SI, que significa que el proceso toma las interfaces en TXT.
+  El codigo 5 por defecto esta en NO.
+  En caso de querer procesar en excel, el codigo 4 se debe poner en NO y el codigo 5 en SI.
+</p>
+
 **<span style="color:yellow">⚠️ ESTE ARCHIVO SI SE PUEDE MODIFICAR </span>**
 
 <br>
